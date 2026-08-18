@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream text-ink antialiased;
+}
+
+@layer components {
+  .container-content {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-10;
+  }
+
+  .nav-link {
+    @apply relative text-[15px] font-medium tracking-wide text-white/90 transition-colors hover:text-white;
+  }
+
+  .nav-link-active::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-forest-mid;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-forest px-6 py-3 text-[15px] font-semibold text-white shadow-soft transition hover:bg-forest-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-navy/25 bg-white px-6 py-3 text-[15px] font-semibold text-navy transition hover:border-navy hover:bg-cream-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy;
+  }
+
+  .admin-input {
+    @apply w-full rounded-md border border-cream-dark bg-white px-3 py-2 text-ink outline-none ring-forest focus:ring-2;
+  }
+}
+
+.prose-article {
+  @apply text-[17px] leading-8 text-ink;
+}
+
+.prose-article h2 {
+  @apply mb-3 mt-10 font-serif text-[28px] text-navy;
+}
+
+.prose-article h3 {
+  @apply mb-2 mt-8 text-[20px] font-semibold text-navy;
+}
+
+.prose-article p {
+  @apply mb-4;
+}
+
+.prose-article ul,
+.prose-article ol {
+  @apply mb-4 ml-5 list-disc space-y-1;
+}
+
+.prose-article ol {
+  @apply list-decimal;
+}
+
+.prose-article a {
+  @apply font-medium text-forest underline-offset-2 hover:underline;
+}
+
+.prose-article img {
+  @apply my-6 rounded-xl;
+}
+
+.prose-article blockquote {
+  @apply my-6 border-l-4 border-forest/40 pl-4 text-ink-muted;
+}
+
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 720px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

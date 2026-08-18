@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: geosbau-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: geosbau
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geosbau}
+      POSTGRES_DB: geosbau
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geosbau -d geosbau"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:2010}
+    container_name: geosbau-web
+    ports:
+      - "2010:2010"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 2010
+      HOSTNAME: 0.0.0.0
+      DATABASE_URL: postgresql://geosbau:${POSTGRES_PASSWORD:-geosbau}@postgres:5432/geosbau?schema=public
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:2010}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:2010').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
