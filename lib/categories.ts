@@ -56,6 +56,6 @@ export function categoryPath(category: Category) {
   return `/${CATEGORY_PATH[category]}`;
 }
 
-export function isCategory(value: string): value is Category {
-  return value in CATEGORY_PATH;
+export function isCategory(value: string | null | undefined): value is Category {
+  return typeof value === "string" && value in CATEGORY_PATH;
 }

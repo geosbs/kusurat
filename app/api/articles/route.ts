@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   }
 
   const categoryParam = request.nextUrl.searchParams.get("category");
-  if (categoryParam && !isCategory(categoryParam)) {
+  if (categoryParam !== null && !isCategory(categoryParam)) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400, headers: jsonHeaders() });
   }
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const offset = clamp(Number.parseInt(request.nextUrl.searchParams.get("offset") ?? "0", 10) || 0, 0, 10_000);
 
   try {
-    const articles = categoryParam
+    const articles = isCategory(categoryParam)
       ? await getPublishedByCategory(categoryParam)
       : await getPublishedArticles();
 
