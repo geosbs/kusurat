@@ -34,10 +34,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/package.json ./package.json
+# Standalone omits Prisma CLI deps (effect, c12, ...). Overlay the full tree after it.
+COPY --from=builder /app/node_modules ./node_modules
 COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN sed -i 's/\r$//' ./docker-entrypoint.sh \
