@@ -4,6 +4,7 @@ import { MarkdownContent } from "@/components/content/MarkdownContent";
 import { getRelatedArticles } from "@/lib/articles";
 import { articlePath, CATEGORY_LABEL, categoryPath } from "@/lib/categories";
 import { extractFaqs } from "@/lib/faq";
+import { getOrganizationNode, getPlaceNode, ORG_ID, SITE_ID } from "@/lib/jsonld";
 import { SITE } from "@/lib/site";
 
 type ArticleViewProps = {
@@ -17,6 +18,8 @@ export async function ArticleView({ article }: ArticleViewProps) {
   const modified = article.updatedAt.toISOString();
 
   const faqs = extractFaqs(article.content);
+
+  const organizationLd = getOrganizationNode();
 
   const articleLd = {
     "@type": "BlogPosting",
@@ -32,10 +35,15 @@ export async function ArticleView({ article }: ArticleViewProps) {
       "@type": "WebPage",
       "@id": url,
     },
-    isPartOf: { "@id": `${SITE.url}/#website` },
-    author: { "@id": `${SITE.url}/#person` },
-    publisher: { "@id": `${SITE.url}/#organization` },
+    isPartOf: { "@id": SITE_ID },
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    copyrightHolder: { "@id": ORG_ID },
     about: CATEGORY_LABEL[article.category],
+    spatialCoverage: [
+      { "@type": "City", name: "Wien" },
+      { "@type": "AdministrativeArea", name: "Niederösterreich" },
+    ],
   };
 
   const breadcrumbLd = {
@@ -70,7 +78,7 @@ export async function ArticleView({ article }: ArticleViewProps) {
 
   const graphLd = {
     "@context": "https://schema.org",
-    "@graph": [articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])],
+    "@graph": [organizationLd, getPlaceNode(), articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])],
   };
 
   return (
