@@ -1,7 +1,23 @@
+export const SITE_ORIGIN = "https://geosbau.at";
+
+function publicOrigin() {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return SITE_ORIGIN;
+  try {
+    const parsed = new URL(raw.includes("://") ? raw : `https://${raw}`);
+    if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") {
+      return SITE_ORIGIN;
+    }
+    return parsed.origin;
+  } catch {
+    return SITE_ORIGIN;
+  }
+}
+
 export const SITE = {
   name: "GEOSBAU",
   tagline: "Ratgeber & Blog",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://geosbau.at",
+  url: publicOrigin(),
   locale: "de_AT",
   language: "de",
   title: "Ratgeber für Räumung, Entrümpelung & Ordnung | GEOSBAU",
