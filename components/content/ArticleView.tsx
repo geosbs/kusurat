@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MarkdownContent } from "@/components/content/MarkdownContent";
 import { getRelatedArticles } from "@/lib/articles";
 import { articlePath, CATEGORY_LABEL, categoryPath } from "@/lib/categories";
+import { extractFaqs } from "@/lib/faq";
 import { SITE } from "@/lib/site";
 
 type ArticleViewProps = {
@@ -15,10 +16,13 @@ export async function ArticleView({ article }: ArticleViewProps) {
   const published = article.createdAt.toISOString();
   const modified = article.updatedAt.toISOString();
 
+  const faqs = extractFaqs(article.content);
+
   const articleLd = {
-    "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: article.title,
+    "@id": `${url}#article`,
+    headline: article.metaTitle || article.title,
+    name: article.title,
     description: article.metaDescription || article.excerpt,
     datePublished: published,
     dateModified: modified,
@@ -29,13 +33,12 @@ export async function ArticleView({ article }: ArticleViewProps) {
       "@id": url,
     },
     isPartOf: { "@id": `${SITE.url}/#website` },
-    author: { "@id": `${SITE.url}/#organization` },
+    author: { "@id": `${SITE.url}/#person` },
     publisher: { "@id": `${SITE.url}/#organization` },
     about: CATEGORY_LABEL[article.category],
   };
 
   const breadcrumbLd = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Start", item: SITE.url },
@@ -49,10 +52,30 @@ export async function ArticleView({ article }: ArticleViewProps) {
     ],
   };
 
+  const faqLd =
+    faqs.length > 0
+      ? {
+          "@type": "FAQPage",
+          "@id": `${url}#faq`,
+          mainEntity: faqs.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
+
+  const graphLd = {
+    "@context": "https://schema.org",
+    "@graph": [articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])],
+  };
+
   return (
     <main id="inhalt" className="bg-cream-soft py-16 lg:py-20">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graphLd) }} />
 
       <article className="container-content">
         <nav aria-label="Brotkrumen" className="text-[13px] text-ink-muted">
@@ -84,6 +107,9 @@ export async function ArticleView({ article }: ArticleViewProps) {
             {article.createdAt.toLocaleDateString("de-AT", { dateStyle: "long" })}
           </p>
           <p className="mt-5 text-[18px] leading-8 text-ink-muted">{article.excerpt}</p>
+          <p className="mt-4 text-[13px] leading-6 text-ink-muted">
+            GEOSBAU ist ein unabhängiger Ratgeber. Wir führen keine Räumungen durch und vermitteln keine Aufträge.
+          </p>
         </div>
 
         <div className="prose-article mt-10 max-w-3xl">

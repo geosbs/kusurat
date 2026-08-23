@@ -8,7 +8,7 @@ export function Hero() {
       <div className="relative min-h-[540px] sm:min-h-[580px] lg:min-h-[640px]">
         <Image
           src="/hero.webp"
-          alt="Geosbau Räumung und Entrümpelung"
+          alt="Zuhause in Wien – unabhängig erklärt im GEOSBAU-Ratgeber"
           fill
           priority
           fetchPriority="high"

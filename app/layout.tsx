@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         url: "/hero.webp",
         width: 1200,
         height: 675,
-        alt: "Geosbau Räumung und Entrümpelung",
+        alt: "Zuhause und Ordnung – GEOSBAU Ratgeber",
       },
     ],
   },
@@ -65,6 +65,10 @@ export const metadata: Metadata = {
     },
   },
   category: "home and garden",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

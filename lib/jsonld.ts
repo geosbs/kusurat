@@ -22,6 +22,7 @@ export function getJsonLd() {
     email: SITE.email,
     description: SITE.description,
     founder: { "@id": `${SITE.url}/#person` },
+    additionalType: "https://schema.org/Blog",
     areaServed: {
       "@type": "Country",
       name: "Austria",

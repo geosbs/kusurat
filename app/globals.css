@@ -78,6 +78,18 @@ body {
   @apply my-6 border-l-4 border-forest/40 pl-4 text-ink-muted;
 }
 
+.prose-article table {
+  @apply my-6 w-full border-collapse text-[15px] leading-6;
+}
+
+.prose-article th {
+  @apply border border-cream-dark bg-cream px-3 py-2 text-left font-semibold text-navy;
+}
+
+.prose-article td {
+  @apply border border-cream-dark px-3 py-2 align-top;
+}
+
 .cv-auto {
   content-visibility: auto;
   contain-intrinsic-size: 1px 720px;

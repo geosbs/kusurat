@@ -6,7 +6,7 @@ export const SITE = {
   language: "de",
   title: "Ratgeber für Räumung, Entrümpelung & Ordnung | GEOSBAU",
   description:
-    "Praxisnahe Ratgeber, Checklisten und Anleitungen für Räumung, Entrümpelung, Haushaltsauflösung und mehr Ordnung – klar, unabhängig und nachhaltig.",
+    "Unabhängiger Ratgeber zu Räumung, Entrümpelung, Haushaltsauflösung und Entsorgung in Österreich – redaktionell, ohne Verkaufsabsicht.",
   email: "info@luxusumzug.at",
   publisherName: "Nuran Duman",
   publisherCity: "Wien",

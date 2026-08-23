@@ -29,7 +29,7 @@ export async function Footer() {
               <Link href="/entruempelung" className="text-white hover:underline">
                 Entrümpelung
               </Link>
-              .
+              . Keine Dienstleistungen, keine Auftragsvermittlung.
             </p>
             <p className="mt-6 text-sm text-white/80">
               <a className="hover:text-white hover:underline" href={`mailto:${SITE.email}`}>
@@ -88,7 +88,7 @@ export async function Footer() {
         </div>
 
         <p className="mt-12 border-t border-white/10 pt-8 text-center text-xs tracking-wide text-white/50 md:text-left">
-          © {year} GEOSBAU – Ratgeber &amp; Blog
+          © {year} GEOSBAU – unabhängiger Ratgeber &amp; Blog
         </p>
       </div>
     </footer>

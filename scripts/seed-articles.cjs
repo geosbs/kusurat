@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const flagshipRatgeber = require("./data/flagship-ratgeber.cjs");
 
 const prisma = new PrismaClient();
 
@@ -579,6 +580,7 @@ Schrauben Sie, wenn möglich, Metallfüße ab. Trennen Sie Holz von Polster, wen
 Eine Entrümpelung ist erst dann sauber, wenn jedes Teil einen legalen, nachvollziehbaren Weg hat – nicht nur der Wohnraum.
 `,
   },
+  ...flagshipRatgeber,
 ];
 
 async function main() {
