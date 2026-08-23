@@ -37,6 +37,11 @@ export async function HomeArticles() {
           </Link>
         </div>
 
+        {articles.length === 0 ? (
+          <p className="mt-10 text-[16px] text-ink-muted">
+            Beiträge werden geladen, sobald die Datenbank erreichbar ist.
+          </p>
+        ) : (
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {articles.map((article) => (
             <li key={article.id}>
@@ -64,6 +69,7 @@ export async function HomeArticles() {
             </li>
           ))}
         </ul>
+        )}
       </div>
     </section>
   );
