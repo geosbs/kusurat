@@ -46,18 +46,46 @@ export function clearAuthCookies(response: NextResponse) {
   return response;
 }
 
+function originFromValue(value: string) {
+  try {
+    return new URL(value.includes("://") ? value : `https://${value}`).origin;
+  } catch {
+    return null;
+  }
+}
+
+function allowedOrigins(request: NextRequest) {
+  const origins = new Set<string>();
+  origins.add(request.nextUrl.origin);
+  origins.add("https://geosbau.at");
+  origins.add("https://www.geosbau.at");
+
+  const site = originFromValue(process.env.NEXT_PUBLIC_SITE_URL || "");
+  if (site) origins.add(site);
+
+  const proto = (request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() || request.nextUrl.protocol.replace(":", "")).replace(/:$/, "");
+  const host =
+    request.headers.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+    request.headers.get("host") ||
+    request.nextUrl.host;
+  if (host) {
+    const forwarded = originFromValue(`${proto === "http" ? "http" : "https"}://${host}`);
+    if (forwarded) origins.add(forwarded);
+  }
+
+  return origins;
+}
+
 export function isSameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  if (!origin) {
+  const originHeader = request.headers.get("origin");
+  let candidate = originHeader;
+  if (!candidate) {
     const referer = request.headers.get("referer");
     if (!referer) return false;
-    try {
-      return new URL(referer).origin === request.nextUrl.origin;
-    } catch {
-      return false;
-    }
+    candidate = originFromValue(referer) ?? undefined;
   }
-  return origin === request.nextUrl.origin;
+  if (!candidate) return false;
+  return allowedOrigins(request).has(candidate);
 }
 
 function timingSafeEqual(a: string, b: string) {
