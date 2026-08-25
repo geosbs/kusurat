@@ -14,19 +14,46 @@ enum Category {
   RATGEBER
 }
 
+enum ArticleStatus {
+  PUBLISHED
+  SCHEDULED
+  DRAFT
+}
+
 model Article {
-  id              String   @id @default(cuid())
+  id              String        @id @default(cuid())
   title           String
-  slug            String   @unique
-  content         String   @db.Text
+  slug            String        @unique
+  content         String        @db.Text
   excerpt         String
   category        Category
+  topic           String        @default("")
   coverImage      String?
+  coverImageAlt   String        @default("")
+  showCoverOnPost Boolean       @default(true)
   metaTitle       String?
   metaDescription String?
-  published       Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  schemaMarkup    String?       @db.Text
+  published       Boolean       @default(true)
+  status          ArticleStatus @default(PUBLISHED)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([category, published])
+  @@index([status, publishedAt])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Topic {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
 }

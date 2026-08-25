@@ -37,9 +37,9 @@ export function createArticleMetadata(category: Category) {
         siteName: SITE.name,
         title: fullTitle,
         description,
-        publishedTime: article.createdAt.toISOString(),
+        publishedTime: (article.publishedAt ?? article.createdAt).toISOString(),
         modifiedTime: article.updatedAt.toISOString(),
-        images: [{ url: image, alt: article.title }],
+        images: [{ url: image, alt: article.coverImageAlt || article.title }],
       },
       twitter: {
         card: "summary_large_image",

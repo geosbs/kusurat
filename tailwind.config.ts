@@ -26,6 +26,10 @@ const config: Config = {
           bar: "#EBE3D4",
           dark: "#E4DAC8",
         },
+        gold: {
+          DEFAULT: "#C9A227",
+          dark: "#A8871C",
+        },
         ink: {
           DEFAULT: "#1C2430",
           muted: "#5C6570",

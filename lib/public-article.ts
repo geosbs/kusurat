@@ -12,7 +12,13 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+export function publicDateOnly(date: Date | null | undefined) {
+  if (!date) return "";
+  return date.toLocaleDateString("en-CA", { timeZone: "Europe/Vienna" });
+}
+
 export function publicArticleListItem(article: Article) {
+  const publishedAt = article.publishedAt ?? article.createdAt;
   return {
     title: article.title,
     slug: article.slug,
@@ -20,8 +26,8 @@ export function publicArticleListItem(article: Article) {
     category: article.category,
     coverImage: article.coverImage,
     url: `${SITE.url}${articlePath(article.category, article.slug)}`,
-    publishedAt: article.createdAt.toISOString(),
-    updatedAt: article.updatedAt.toISOString(),
+    publishedAt: publicDateOnly(publishedAt),
+    updatedAt: publicDateOnly(article.updatedAt),
   };
 }
 

@@ -1,69 +1,80 @@
 import type { Category } from "@prisma/client";
 import { unstable_noStore as noStore } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import { isDatabaseUnreachable, prisma } from "@/lib/prisma";
+import { liveArticleWhere, promoteDueArticles } from "@/lib/live-articles";
+
+async function readyLiveQuery() {
+  noStore();
+  await promoteDueArticles();
+}
+
+function logQueryError(label: string, error: unknown) {
+  if (isDatabaseUnreachable(error)) return;
+  console.error(label, error);
+}
 
 export async function getPublishedArticles() {
-  noStore();
+  await readyLiveQuery();
   try {
     return await prisma.article.findMany({
-      where: { published: true },
-      orderBy: { createdAt: "desc" },
+      where: liveArticleWhere(),
+      orderBy: { publishedAt: "desc" },
     });
   } catch (error) {
-    console.error("getPublishedArticles", error);
+    logQueryError("getPublishedArticles", error);
     return [];
   }
 }
 
 export async function getPublishedByCategory(category: Category) {
-  noStore();
+  await readyLiveQuery();
   try {
     return await prisma.article.findMany({
-      where: { published: true, category },
-      orderBy: { createdAt: "desc" },
+      where: { ...liveArticleWhere(), category },
+      orderBy: { publishedAt: "desc" },
     });
   } catch (error) {
-    console.error("getPublishedByCategory", error);
+    logQueryError("getPublishedByCategory", error);
     return [];
   }
 }
 
 export async function getLatestArticles(limit = 6) {
-  noStore();
+  await readyLiveQuery();
   try {
     return await prisma.article.findMany({
-      where: { published: true },
-      orderBy: { createdAt: "desc" },
+      where: liveArticleWhere(),
+      orderBy: { publishedAt: "desc" },
       take: limit,
     });
   } catch (error) {
-    console.error("getLatestArticles", error);
+    logQueryError("getLatestArticles", error);
     return [];
   }
 }
 
 export async function getRelatedArticles(category: Category, slug: string, limit = 3) {
-  noStore();
+  await readyLiveQuery();
   try {
     return await prisma.article.findMany({
-      where: { published: true, category, slug: { not: slug } },
-      orderBy: { createdAt: "desc" },
+      where: { ...liveArticleWhere(), category, slug: { not: slug } },
+      orderBy: { publishedAt: "desc" },
       take: limit,
     });
   } catch (error) {
-    console.error("getRelatedArticles", error);
+    logQueryError("getRelatedArticles", error);
     return [];
   }
 }
 
 export async function getPublishedArticle(category: Category, slug: string) {
-  noStore();
+  await readyLiveQuery();
   try {
     return await prisma.article.findFirst({
-      where: { published: true, category, slug },
+      where: { ...liveArticleWhere(), category, slug },
     });
   } catch (error) {
-    console.error("getPublishedArticle", error);
+    logQueryError("getPublishedArticle", error);
     return null;
   }
 }

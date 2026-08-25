@@ -22,7 +22,7 @@ export async function GET() {
         <title>${escapeXml(article.title)}</title>
         <link>${escapeXml(url)}</link>
         <guid isPermaLink="true">${escapeXml(url)}</guid>
-        <pubDate>${article.createdAt.toUTCString()}</pubDate>
+        <pubDate>${(article.publishedAt ?? article.createdAt).toUTCString()}</pubDate>
         <category>${escapeXml(CATEGORY_LABEL[article.category])}</category>
         <description>${escapeXml(article.excerpt)}</description>
       </item>`;

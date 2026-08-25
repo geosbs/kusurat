@@ -36,6 +36,10 @@ services:
       HOSTNAME: 0.0.0.0
       DATABASE_URL: postgresql://geosbau:${POSTGRES_PASSWORD:-geosbau}@postgres:5432/geosbau?schema=public
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://geosbau.at}
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production-use-a-long-random-string-32plus}
+      UPLOAD_DIR: /app/uploads/covers
+    volumes:
+      - cover_uploads:/app/uploads
     healthcheck:
       test:
         [
@@ -51,3 +55,4 @@ services:
 
 volumes:
   postgres_data:
+  cover_uploads:

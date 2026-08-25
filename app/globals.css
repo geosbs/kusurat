@@ -90,6 +90,26 @@ body {
   @apply border border-cream-dark px-3 py-2 align-top;
 }
 
+.prose-article pre {
+  @apply my-6 overflow-x-auto rounded-lg bg-navy-deep px-4 py-3 text-[14px] text-cream;
+}
+
+.prose-article code {
+  @apply rounded bg-cream-dark px-1 py-0.5 text-[14px];
+}
+
+.prose-article pre code {
+  @apply bg-transparent p-0 text-cream;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #7a838e;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 .cv-auto {
   content-visibility: auto;
   contain-intrinsic-size: 1px 720px;

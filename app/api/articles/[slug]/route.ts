@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { liveArticleWhere, promoteDueArticles } from "@/lib/live-articles";
 import { isValidSlug, jsonHeaders, publicArticleDetail } from "@/lib/public-article";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
@@ -20,8 +21,9 @@ export async function GET(_request: NextRequest, context: RouteContext) {
   }
 
   try {
+    await promoteDueArticles();
     const article = await prisma.article.findFirst({
-      where: { published: true, slug },
+      where: { ...liveArticleWhere(), slug },
     });
 
     if (!article) {

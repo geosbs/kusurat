@@ -40,9 +40,10 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/scripts ./scripts
 COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 
-RUN sed -i 's/\r$//' ./docker-entrypoint.sh \
+RUN mkdir -p /app/uploads/covers \
+  && sed -i 's/\r$//' ./docker-entrypoint.sh \
   && chmod +x ./docker-entrypoint.sh \
-  && chown nextjs:nodejs ./docker-entrypoint.sh
+  && chown -R nextjs:nodejs ./docker-entrypoint.sh /app/uploads
 
 USER nextjs
 EXPOSE 2010
