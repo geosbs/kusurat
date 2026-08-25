@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Article } from "@prisma/client";
+import { ExternalLink } from "lucide-react";
 import { adminFetch } from "@/components/admin/admin-fetch";
-import { CATEGORY_LABEL } from "@/lib/categories";
+import { articlePath, CATEGORY_LABEL } from "@/lib/categories";
 import { formatViennaSlot } from "@/lib/queue";
 
 const TABS = [
@@ -104,7 +105,18 @@ export function PostsManager({ posts, tab }: { posts: Article[]; tab: string }) 
             ) : (
               posts.map((post) => (
                 <tr key={post.id} className="border-b border-cream-dark/70">
-                  <td className="py-3 pr-4 font-medium text-navy">{post.title}</td>
+                  <td className="py-3 pr-4">
+                    <p className="font-medium text-navy">{post.title}</p>
+                    <a
+                      href={articlePath(post.category, post.slug)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex items-center gap-1 break-all text-xs text-forest hover:underline"
+                    >
+                      {articlePath(post.category, post.slug)}
+                      <ExternalLink className="h-3 w-3 shrink-0" />
+                    </a>
+                  </td>
                   <td className="py-3 pr-4 text-ink-muted">
                     {post.topic || CATEGORY_LABEL[post.category]}
                     <span className="block text-xs">{CATEGORY_LABEL[post.category]}</span>
@@ -113,6 +125,14 @@ export function PostsManager({ posts, tab }: { posts: Article[]; tab: string }) 
                   <td className="py-3 pr-4 text-ink-muted">{formatViennaSlot(post.publishedAt)}</td>
                   <td className="py-3">
                     <div className="flex flex-wrap gap-2">
+                      <a
+                        href={articlePath(post.category, post.slug)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-md bg-white px-3 py-1 text-xs font-semibold text-navy hover:bg-cream-dark"
+                      >
+                        View live
+                      </a>
                       {post.status !== "PUBLISHED" ? (
                         <button
                           type="button"
