@@ -78,11 +78,11 @@ function allowedOrigins(request: NextRequest) {
 
 export function isSameOrigin(request: NextRequest) {
   const originHeader = request.headers.get("origin");
-  let candidate = originHeader;
+  let candidate: string | null = originHeader;
   if (!candidate) {
     const referer = request.headers.get("referer");
     if (!referer) return false;
-    candidate = originFromValue(referer) ?? undefined;
+    candidate = originFromValue(referer);
   }
   if (!candidate) return false;
   return allowedOrigins(request).has(candidate);
