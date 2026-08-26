@@ -6,7 +6,6 @@ import { isCategory } from "@/lib/categories";
 import { slugify } from "@/lib/slugify";
 
 const META_MAX = 320;
-const COVER_WEBP = /\.webp(\?.*)?$/i;
 
 export type PublishMode = "automatic" | "manual";
 
@@ -16,9 +15,6 @@ export type PostInput = {
   mainSection: string;
   topic: string;
   metaDescription: string;
-  coverImage: string;
-  coverImageAlt: string;
-  showCoverOnPost: boolean;
   content: string;
   schemaMarkup: string;
   publishMode: PublishMode;
@@ -35,9 +31,6 @@ export function parsePostInput(body: unknown): { data?: PostInput; error?: strin
   const mainSection = typeof value.mainSection === "string" ? value.mainSection : "";
   const topic = typeof value.topic === "string" ? value.topic.trim() : "";
   const metaDescription = typeof value.metaDescription === "string" ? value.metaDescription.trim() : "";
-  const coverImage = typeof value.coverImage === "string" ? value.coverImage.trim() : "";
-  const coverImageAlt = typeof value.coverImageAlt === "string" ? value.coverImageAlt.trim() : "";
-  const showCoverOnPost = value.showCoverOnPost !== false;
   const content = typeof value.content === "string" ? value.content : "";
   const schemaMarkup = typeof value.schemaMarkup === "string" ? value.schemaMarkup.trim() : "";
   const publishMode = value.publishMode === "manual" ? "manual" : "automatic";
@@ -47,8 +40,6 @@ export function parsePostInput(body: unknown): { data?: PostInput; error?: strin
     const mapped = mapMainSection(mainSection);
     if (!mapped) return { error: "Please choose a valid main section." };
   }
-  if (!coverImage) return { error: "Cover image is required." };
-  if (!COVER_WEBP.test(coverImage)) return { error: "Cover image must be a .webp file." };
   if (metaDescription.length > META_MAX) return { error: `Meta description must be ${META_MAX} characters or fewer.` };
   if (!content.trim()) return { error: "Content cannot be empty." };
 
@@ -82,9 +73,6 @@ export function parsePostInput(body: unknown): { data?: PostInput; error?: strin
       mainSection,
       topic,
       metaDescription,
-      coverImage,
-      coverImageAlt,
-      showCoverOnPost,
       content,
       schemaMarkup,
       publishMode,
@@ -175,9 +163,9 @@ export function toArticleData(input: PostInput, publish: Awaited<ReturnType<type
     topic: input.topic,
     excerpt,
     content,
-    coverImage: input.coverImage,
-    coverImageAlt: input.coverImageAlt,
-    showCoverOnPost: input.showCoverOnPost,
+    coverImage: null,
+    coverImageAlt: "",
+    showCoverOnPost: false,
     metaTitle: input.title,
     metaDescription: input.metaDescription || excerpt.slice(0, META_MAX),
     schemaMarkup: input.schemaMarkup || null,

@@ -41,7 +41,6 @@ export async function ArticleView({ article }: ArticleViewProps) {
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
     copyrightHolder: { "@id": ORG_ID },
-    image: article.coverImage || undefined,
     about: CATEGORY_LABEL[article.category],
     spatialCoverage: [
       { "@type": "City", name: "Wien" },
@@ -133,16 +132,6 @@ export async function ArticleView({ article }: ArticleViewProps) {
             GEOSBAU ist ein unabhängiger Ratgeber. Wir führen keine Räumungen durch und vermitteln keine Aufträge.
           </p>
         </div>
-
-        {article.showCoverOnPost && article.coverImage ? (
-          <figure className="mt-8 max-w-3xl">
-            <img
-              src={article.coverImage}
-              alt={article.coverImageAlt || article.title}
-              className="w-full rounded-2xl"
-            />
-          </figure>
-        ) : null}
 
         <div className="prose-article mt-10 max-w-3xl">
           <ArticleBody article={article} />

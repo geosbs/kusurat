@@ -42,9 +42,6 @@ export function PostEditor({ post, topics: initialTopics }: PostEditorProps) {
   const [topics, setTopics] = useState(initialTopics);
   const [newTopic, setNewTopic] = useState("");
   const [metaDescription, setMetaDescription] = useState(post?.metaDescription ?? "");
-  const [coverImage, setCoverImage] = useState(post?.coverImage ?? "");
-  const [coverImageAlt, setCoverImageAlt] = useState(post?.coverImageAlt ?? "");
-  const [showCoverOnPost, setShowCoverOnPost] = useState(post?.showCoverOnPost ?? true);
   const [content, setContent] = useState(post?.content ?? "");
   const [schemaMarkup, setSchemaMarkup] = useState(post?.schemaMarkup ?? "");
   const [publishMode, setPublishMode] = useState<"automatic" | "manual">(post?.status === "PUBLISHED" ? "manual" : "automatic");
@@ -52,7 +49,6 @@ export function PostEditor({ post, topics: initialTopics }: PostEditorProps) {
   const [manualPublishedAt, setManualPublishedAt] = useState(toDatetimeLocal(post?.publishedAt));
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  const [uploadHint, setUploadHint] = useState("");
 
   useEffect(() => {
     if (!slugTouched) setSlug(slugify(title));
@@ -80,28 +76,6 @@ export function PostEditor({ post, topics: initialTopics }: PostEditorProps) {
     setNewTopic("");
   }
 
-  async function onDropFile(file: File) {
-    setUploadHint("");
-    if (!file.name.toLowerCase().endsWith(".webp") || file.type !== "image/webp") {
-      setError("Only .webp files are allowed.");
-      return;
-    }
-    if (file.size > 2 * 1024 * 1024) {
-      setError("Cover image must be under 2 MB.");
-      return;
-    }
-    const body = new FormData();
-    body.append("file", file);
-    const response = await adminFetch("/api/admin/upload", { method: "POST", body });
-    const data = (await response.json()) as { url?: string; error?: string };
-    if (!response.ok || !data.url) {
-      setError(data.error || "Upload failed.");
-      return;
-    }
-    setCoverImage(data.url);
-    setError("");
-  }
-
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setPending(true);
@@ -113,9 +87,6 @@ export function PostEditor({ post, topics: initialTopics }: PostEditorProps) {
         mainSection,
         topic,
         metaDescription,
-        coverImage,
-        coverImageAlt,
-        showCoverOnPost,
         content,
         schemaMarkup,
         publishMode,
@@ -223,55 +194,6 @@ export function PostEditor({ post, topics: initialTopics }: PostEditorProps) {
           {metaDescription.length} / {META_MAX} characters
         </p>
       </div>
-
-      <div>
-        <p className="mb-1.5 text-sm font-semibold text-navy">Cover Image (Required, .webp only)</p>
-        <label
-          className="flex min-h-[140px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-cream-dark bg-white px-4 py-6 text-center text-sm text-ink-muted"
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={(event) => {
-            event.preventDefault();
-            const file = event.dataTransfer.files[0];
-            if (file) void onDropFile(file);
-          }}
-        >
-          <input
-            type="file"
-            accept=".webp,image/webp"
-            className="sr-only"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (file) void onDropFile(file);
-            }}
-          />
-          {coverImage ? (
-            <img src={coverImage} alt={coverImageAlt || "Cover preview"} className="mb-3 max-h-40 rounded-md" />
-          ) : null}
-          <span>Drag & drop a .webp file here, or click to upload.</span>
-        </label>
-        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-          Only .webp files allowed. Please use watermark-free images (under 300 KB recommended, max 2 MB).
-        </div>
-        {uploadHint ? <p className="mt-2 text-sm text-ink-muted">{uploadHint}</p> : null}
-      </div>
-
-      <div>
-        <label htmlFor="alt" className="mb-1.5 block text-sm font-semibold text-navy">
-          Image Alt Text
-        </label>
-        <input
-          id="alt"
-          className="admin-input"
-          placeholder="Short description of the image"
-          value={coverImageAlt}
-          onChange={(event) => setCoverImageAlt(event.target.value)}
-        />
-      </div>
-
-      <label className="flex items-center gap-2 text-sm text-navy">
-        <input type="checkbox" checked={showCoverOnPost} onChange={(event) => setShowCoverOnPost(event.target.checked)} />
-        Show cover image on the article page
-      </label>
 
       <fieldset className="rounded-lg border border-cream-dark bg-white p-4">
         <legend className="px-1 text-sm font-semibold text-navy">Publishing Options</legend>

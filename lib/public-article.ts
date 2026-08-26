@@ -24,7 +24,6 @@ export function publicArticleListItem(article: Article) {
     slug: article.slug,
     excerpt: article.excerpt,
     category: article.category,
-    coverImage: article.coverImage,
     url: `${SITE.url}${articlePath(article.category, article.slug)}`,
     publishedAt: publicDateOnly(publishedAt),
     updatedAt: publicDateOnly(article.updatedAt),

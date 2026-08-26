@@ -23,7 +23,6 @@ export function createArticleMetadata(category: Category) {
     const description = article.metaDescription || article.excerpt;
     const path = articlePath(article.category, article.slug);
     const canonicalUrl = `${SITE.url}${path}`;
-    const image = article.coverImage || "/hero.webp";
     const fullTitle = brandedTitle(title);
 
     return {
@@ -39,13 +38,13 @@ export function createArticleMetadata(category: Category) {
         description,
         publishedTime: (article.publishedAt ?? article.createdAt).toISOString(),
         modifiedTime: article.updatedAt.toISOString(),
-        images: [{ url: image, alt: article.coverImageAlt || article.title }],
+        images: [{ url: "/hero.webp", alt: article.title }],
       },
       twitter: {
         card: "summary_large_image",
         title: fullTitle,
         description,
-        images: [image],
+        images: ["/hero.webp"],
       },
     };
   };
