@@ -21,10 +21,17 @@ export default function KontaktPage() {
           <h2 className="font-serif text-[22px] text-navy">So erreichen Sie uns</h2>
           <address className="mt-4 not-italic text-[16px] leading-7 text-ink-muted">
             <p className="font-medium text-navy">{SITE.publisherName}</p>
+            <p>{SITE.publisherStreet}</p>
             <p>
-              {SITE.publisherCity}, {SITE.publisherCountry}
+              {SITE.publisherPostalCode} {SITE.publisherCity}
             </p>
             <p className="mt-3">
+              Tel.:{" "}
+              <a className="font-medium text-forest underline-offset-2 hover:underline" href={SITE.publisherPhoneHref}>
+                {SITE.publisherPhone}
+              </a>
+            </p>
+            <p>
               E-Mail:{" "}
               <a className="font-medium text-forest underline-offset-2 hover:underline" href={`mailto:${SITE.email}`}>
                 {SITE.email}

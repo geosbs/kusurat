@@ -23,10 +23,16 @@ export const SITE = {
   title: "Ratgeber für Räumung, Entrümpelung & Ordnung | GEOSBAU",
   description:
     "Unabhängiger Ratgeber zu Räumung, Entrümpelung, Haushaltsauflösung und Entsorgung in Österreich – redaktionell, ohne Verkaufsabsicht.",
-  email: "info@luxusumzug.at",
+  email: "info@geosbau.at",
   publisherName: "Nuran Duman",
-  publisherCity: "Wien",
+  publisherStreet: "Dr. Karl-Swoboda-Str 25",
+  publisherPostalCode: "2486",
+  publisherCity: "Pottendorf",
+  publisherRegion: "Niederösterreich",
   publisherCountry: "Österreich",
+  publisherPhone: "+43 660 871 77 20",
+  publisherPhoneHref: "tel:+436608717720",
+  publisherPhoneE164: "+436608717720",
 } as const;
 
 export const NAV_ITEMS = [

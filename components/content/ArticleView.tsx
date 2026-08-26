@@ -4,7 +4,7 @@ import { ArticleBody } from "@/components/content/ArticleBody";
 import { getRelatedArticles } from "@/lib/articles";
 import { articlePath, CATEGORY_LABEL, categoryPath } from "@/lib/categories";
 import { extractFaqs } from "@/lib/faq";
-import { getOrganizationNode, getPlaceNode, ORG_ID, SITE_ID } from "@/lib/jsonld";
+import { getOrganizationNode, getPersonNode, getPlaceNode, ORG_ID, SITE_ID } from "@/lib/jsonld";
 import { formatPublicDate } from "@/lib/queue";
 import { SITE } from "@/lib/site";
 
@@ -80,7 +80,7 @@ export async function ArticleView({ article }: ArticleViewProps) {
 
   const graphLd = {
     "@context": "https://schema.org",
-    "@graph": [organizationLd, getPlaceNode(), articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])],
+    "@graph": [getPersonNode(), organizationLd, getPlaceNode(), articleLd, breadcrumbLd, ...(faqLd ? [faqLd] : [])],
   };
 
   const customSchema = (() => {

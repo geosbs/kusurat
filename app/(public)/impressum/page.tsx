@@ -23,8 +23,16 @@ export default function ImpressumPage() {
             <h2 className="font-serif text-[22px] text-navy">Medieninhaber und für den Inhalt verantwortlich</h2>
             <address className="mt-4 not-italic">
               <p className="font-medium text-navy">{SITE.publisherName}</p>
+              <p>{SITE.publisherStreet}</p>
               <p>
-                {SITE.publisherCity}, {SITE.publisherCountry}
+                {SITE.publisherPostalCode} {SITE.publisherCity}
+              </p>
+              <p>{SITE.publisherCountry}</p>
+              <p className="mt-3">
+                Tel.:{" "}
+                <a className="font-medium text-forest underline-offset-2 hover:underline" href={SITE.publisherPhoneHref}>
+                  {SITE.publisherPhone}
+                </a>
               </p>
               <p>
                 E-Mail:{" "}
