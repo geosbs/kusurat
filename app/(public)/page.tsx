@@ -4,6 +4,7 @@ import { FeaturesBar } from "@/components/home/FeaturesBar";
 import { Hero } from "@/components/home/Hero";
 import { StepsSection } from "@/components/home/StepsSection";
 import { HomeArticles } from "@/components/home/HomeArticles";
+import { OfficeClearanceNote } from "@/components/home/OfficeClearanceNote";
 import { canonical } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -22,6 +23,7 @@ export default function HomePage() {
     <main id="inhalt">
       <Hero />
       <AcronymSection />
+      <OfficeClearanceNote />
       <HomeArticles />
       <StepsSection />
       <FeaturesBar />

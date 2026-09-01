@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getPublishedArticles } from "@/lib/articles";
+import { getLatestArticles } from "@/lib/articles";
 import { articlePath, CATEGORY_LABEL, categoryPath } from "@/lib/categories";
 
 export async function HomeArticles() {
-  const articles = await getPublishedArticles();
+  const articles = await getLatestArticles(6);
 
   return (
     <section aria-labelledby="home-articles-heading" className="cv-auto bg-white py-16 lg:py-20">
