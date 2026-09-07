@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPublishedArticles, getPublishedByCategory } from "@/lib/articles";
+import { CATEGORY_PAGE_SIZE, getPublishedPage } from "@/lib/articles";
 import { isCategory } from "@/lib/categories";
-import { clamp, jsonHeaders, publicArticleListItem } from "@/lib/public-article";
+import { isValidCursor, jsonHeaders } from "@/lib/public-article";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  if (!rateLimit(clientIp(request))) {
+  if (!rateLimit(clientIp(request), 40, 60_000)) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: jsonHeaders() });
   }
 
@@ -16,22 +16,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400, headers: jsonHeaders() });
   }
 
-  const limit = clamp(Number.parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10) || 20, 1, 50);
-  const offset = clamp(Number.parseInt(request.nextUrl.searchParams.get("offset") ?? "0", 10) || 0, 0, 10_000);
+  const cursorParam = request.nextUrl.searchParams.get("cursor");
+  if (cursorParam !== null && !isValidCursor(cursorParam)) {
+    return NextResponse.json({ error: "Invalid cursor" }, { status: 400, headers: jsonHeaders() });
+  }
 
   try {
-    const articles = isCategory(categoryParam)
-      ? await getPublishedByCategory(categoryParam)
-      : await getPublishedArticles();
-
-    const page = articles.slice(offset, offset + limit).map(publicArticleListItem);
+    const page = await getPublishedPage({
+      category: isCategory(categoryParam) ? categoryParam : undefined,
+      take: CATEGORY_PAGE_SIZE,
+      cursor: cursorParam ?? undefined,
+    });
 
     return NextResponse.json(
       {
-        items: page,
-        total: articles.length,
-        limit,
-        offset,
+        items: page.items,
+        hasMore: page.hasMore,
+        nextCursor: page.nextCursor,
       },
       { headers: jsonHeaders() },
     );

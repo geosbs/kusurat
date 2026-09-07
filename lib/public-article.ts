@@ -12,6 +12,10 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+export function isValidCursor(value: string | null | undefined): value is string {
+  return typeof value === "string" && value.length >= 8 && value.length <= 40 && /^[a-zA-Z0-9_-]+$/.test(value);
+}
+
 export function publicDateOnly(date: Date | null | undefined) {
   if (!date) return "";
   return date.toLocaleDateString("en-CA", { timeZone: "Europe/Vienna" });
