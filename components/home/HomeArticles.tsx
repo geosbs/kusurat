@@ -9,7 +9,7 @@ export async function HomeArticles() {
   return (
     <section aria-labelledby="home-articles-heading" className="cv-auto bg-white py-16 lg:py-20">
       <div className="container-content">
-        <div className="flex flex-col gap-6 border-b border-cream-dark pb-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="border-b border-cream-dark pb-8">
           <div className="max-w-3xl">
             <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-forest">Ratgeber &amp; Wissen</p>
             <h2 id="home-articles-heading" className="mt-3 font-serif text-[32px] leading-tight text-navy sm:text-[40px]">
@@ -31,10 +31,6 @@ export async function HomeArticles() {
               .
             </p>
           </div>
-          <Link href="/ratgeber" className="inline-flex items-center gap-2 text-[15px] font-semibold text-navy hover:text-forest">
-            Alle Ratgeber
-            <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
 
         {articles.length === 0 ? (
@@ -69,6 +65,12 @@ export async function HomeArticles() {
             </li>
           ))}
         </ul>
+        <div className="mt-8 flex justify-end">
+          <Link href="/ratgeber" className="btn-primary">
+            Alle Ratgeber
+            <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
+          </Link>
+        </div>
         )}
       </div>
     </section>
