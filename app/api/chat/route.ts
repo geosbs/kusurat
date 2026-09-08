@@ -78,9 +78,9 @@ export async function POST(request: NextRequest) {
   }
 
   const history = cleaned.slice(-CHAT_HISTORY_LIMIT);
-  const siteKnowledge = await buildChatKnowledge(lastUser.content);
 
   try {
+    const siteKnowledge = await buildChatKnowledge(lastUser.content);
     const reply = await createGeosChatReply(history, siteKnowledge);
     return NextResponse.json(
       { reply },
@@ -95,6 +95,12 @@ export async function POST(request: NextRequest) {
     const code = error && typeof error === "object" && "code" in error ? String((error as { code?: string }).code) : "";
     if (code === "NO_API_KEY") {
       return jsonError("Der Assistent ist gerade nicht erreichbar.", 503);
+    }
+    if (code === "RATE_LIMIT") {
+      return jsonError("Zu viele Anfragen. Bitte warten Sie einen Moment.", 429);
+    }
+    if (code === "TIMEOUT") {
+      return jsonError("Die Antwort dauert etwas länger. Bitte erneut senden.", 504);
     }
     return jsonError("Der Assistent ist gerade nicht erreichbar.", 502);
   }

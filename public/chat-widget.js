@@ -5,6 +5,39 @@
   var HISTORY_LIMIT = 4;
   var MAX_CHARS = 800;
   var QUICK = ["Was kostet eine Entrümpelung?", "Wohnung räumen lassen", "Umzug & Haushaltsauflösung"];
+  var FOLLOW = [
+    {
+      keys: ["preis", "kostet", "kosten", "fixpreis", "euro", "teuer", "angebot"],
+      next: ["Ist die Besichtigung kostenlos?", "Was ist im Festpreis enthalten?"],
+    },
+    {
+      keys: ["wohnung", "wohnungsraumung", "besenrein", "auszug", "mietwohnung"],
+      next: ["Besenrein übergeben – wie geht das?", "Keller oder Dachboden miträumen?"],
+    },
+    {
+      keys: ["umzug", "haushalt", "aufloesung", "nachlass", "verlassenschaft"],
+      next: ["Was kostet eine Haushaltsauflösung?", "Entrümpelung vor dem Umzug?"],
+    },
+    {
+      keys: ["keller", "dachboden", "speicher", "garage"],
+      next: ["Sperrmüll oder Recyclinghof?", "Was kostet eine Kellerentrümpelung?"],
+    },
+    {
+      keys: ["entruempel", "raeum", "moebel", "entsorg"],
+      next: ["Was kostet eine Entrümpelung?", "Sofort Entrümpelung – wie läuft das?"],
+    },
+    {
+      keys: ["sofort", "partner", "besicht", "termin", "firma"],
+      next: ["Was kostet eine Entrümpelung?", "Wie schnell gibt es einen Termin?"],
+    },
+  ];
+  var DEFAULT_NEXT = [
+    "Ist die Besichtigung kostenlos?",
+    "Was kostet eine Entrümpelung?",
+    "Wohnung räumen lassen",
+    "Umzug & Haushaltsauflösung",
+    "Sofort Entrümpelung – wie läuft das?",
+  ];
   var WELCOME =
     "Guten Tag. geosbau.at ist ein unabhängiger Ratgeber zu Entrümpelung, Räumung und Umzug. Für die praktische Durchführung empfehlen wir Sofort Entrümpelung. Womit darf ich helfen?";
 
@@ -13,7 +46,7 @@
     for (var i = 0; i < scripts.length; i += 1) {
       var src = scripts[i].src || "";
       if (src.indexOf("chat-widget.js") !== -1) {
-        return src.replace(/chat-widget\.js(?:\?.*)?$/, "chat-widget.css");
+        return src.replace("chat-widget.js", "chat-widget.css");
       }
     }
     return "/chat-widget.css";
@@ -43,18 +76,24 @@
       .replace(/"/g, "&quot;");
   }
 
+  function canonicalizeLinks(text) {
+    return String(text || "")
+      .replace(/\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/gi, "$1")
+      .replace(
+        /[\(\[\{<"'\u201e\u00ab]*\s*(?:https?:\/\/)?(?:www\.)?(sofortentrumpelung\.at|geosbau\.at)(\/[A-Za-z0-9\-_\/]*)?\s*[\)\]\}>"'\u201c\u00bb.,;:!?…]*/gi,
+        function (_full, host, path) {
+          var safePath = (path || "").replace(/[^A-Za-z0-9\-_\/]/g, "");
+          return " https://" + String(host).toLowerCase() + safePath + " ";
+        },
+      )
+      .replace(/[ \t]{2,}/g, " ");
+  }
+
   function linkify(text) {
-    return escapeHtml(text).replace(
-      /(https?:\/\/[^\s<]+)|(www\.[^\s<]+)|((?:sofortentrumpelung|geosbau)\.at(?:\/[^\s<]*)?)/gi,
-      function (match) {
-        var href = match.indexOf("http") === 0 ? match : "https://" + match.replace(/^www\./i, "");
-        if (/sofortentrumpelung\.at/i.test(match) && match.indexOf("http") !== 0) {
-          href = "https://" + match.replace(/^www\./i, "");
-        }
-        if (/geosbau\.at/i.test(match) && match.indexOf("http") !== 0) {
-          href = "https://" + match.replace(/^www\./i, "");
-        }
-        return '<a href="' + href + '" target="_blank" rel="noopener">' + match + "</a>";
+    return escapeHtml(canonicalizeLinks(text)).replace(
+      /https:\/\/(?:sofortentrumpelung\.at|geosbau\.at)(?:\/[A-Za-z0-9\-_\/]*)?/gi,
+      function (href) {
+        return '<a href="' + href + '" target="_blank" rel="noopener">' + href + "</a>";
       },
     );
   }
@@ -107,17 +146,62 @@
     var quick = document.getElementById("geos-chat-quick");
     var history = [];
     var pending = false;
+    var askedSet = {};
 
-    QUICK.forEach(function (label) {
-      var button = document.createElement("button");
-      button.type = "button";
-      button.className = "geos-chat-quick";
-      button.textContent = label;
-      button.addEventListener("click", function () {
-        sendMessage(label);
+    function normalize(value) {
+      return String(value || "")
+        .toLowerCase()
+        .replace(/ä/g, "ae")
+        .replace(/ö/g, "oe")
+        .replace(/ü/g, "ue")
+        .replace(/ß/g, "ss");
+    }
+
+    function followUpsFor(asked) {
+      var text = normalize(asked);
+      var picked = [];
+      var i;
+      var j;
+      var item;
+      var candidate;
+      for (i = 0; i < FOLLOW.length; i += 1) {
+        item = FOLLOW[i];
+        for (j = 0; j < item.keys.length; j += 1) {
+          if (text.indexOf(item.keys[j]) !== -1) {
+            for (var k = 0; k < item.next.length; k += 1) {
+              candidate = item.next[k];
+              if (!askedSet[normalize(candidate)] && picked.indexOf(candidate) === -1) {
+                picked.push(candidate);
+              }
+            }
+          }
+        }
+      }
+      for (i = 0; i < DEFAULT_NEXT.length && picked.length < 2; i += 1) {
+        candidate = DEFAULT_NEXT[i];
+        if (!askedSet[normalize(candidate)] && picked.indexOf(candidate) === -1) {
+          picked.push(candidate);
+        }
+      }
+      return picked.slice(0, 2);
+    }
+
+    function renderQuick(labels) {
+      quick.innerHTML = "";
+      quick.classList.remove("is-hidden");
+      (labels || []).forEach(function (label) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "geos-chat-quick is-new";
+        button.textContent = label;
+        button.addEventListener("click", function () {
+          sendMessage(label);
+        });
+        quick.appendChild(button);
       });
-      quick.appendChild(button);
-    });
+    }
+
+    renderQuick(QUICK);
 
     function addBubble(role, text) {
       var bubble = document.createElement("div");
@@ -146,9 +230,10 @@
       if (pending || !value || value.length > MAX_CHARS) return;
       pending = true;
       addBubble("user", value);
+      askedSet[normalize(value)] = true;
       history.push({ role: "user", content: value });
       history = history.slice(-HISTORY_LIMIT);
-      quick.classList.add("is-hidden");
+      renderQuick(followUpsFor(value));
       setTyping(true);
       input.value = "";
 
@@ -170,6 +255,7 @@
             reply = data.error || "Der Assistent ist gerade nicht erreichbar. Bitte versuchen Sie es später erneut.";
           }
           addBubble("bot", reply);
+          renderQuick(followUpsFor(value));
           if (result.ok && typeof data.reply === "string") {
             history.push({ role: "assistant", content: reply.slice(0, 280) });
             history = history.slice(-HISTORY_LIMIT);

@@ -70,7 +70,20 @@ function allowedOrigins(request: NextRequest) {
     request.nextUrl.host;
   if (host) {
     const forwarded = originFromValue(`${proto === "http" ? "http" : "https"}://${host}`);
-    if (forwarded) origins.add(forwarded);
+    if (forwarded) {
+      origins.add(forwarded);
+      try {
+        const parsed = new URL(forwarded);
+        if (parsed.hostname === "localhost") {
+          origins.add(`${parsed.protocol}//127.0.0.1${parsed.port ? `:${parsed.port}` : ""}`);
+        }
+        if (parsed.hostname === "127.0.0.1") {
+          origins.add(`${parsed.protocol}//localhost${parsed.port ? `:${parsed.port}` : ""}`);
+        }
+      } catch {
+        // ignore malformed forwarded origin
+      }
+    }
   }
 
   return origins;
