@@ -37,6 +37,7 @@ services:
       DATABASE_URL: postgresql://geosbau:${POSTGRES_PASSWORD:-geosbau}@postgres:5432/geosbau?schema=public
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://geosbau.at}
       AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production-use-a-long-random-string-32plus}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       UPLOAD_DIR: /app/uploads/covers
     volumes:
       - cover_uploads:/app/uploads

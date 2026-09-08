@@ -1,3 +1,4 @@
+import { ChatWidget } from "@/components/ChatWidget";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 
@@ -9,6 +10,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Header />
       {children}
       <Footer />
+      <ChatWidget />
     </>
   );
 }
