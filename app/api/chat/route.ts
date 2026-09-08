@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CHAT_HISTORY_LIMIT, createGeosChatReply } from "@/api/chat";
 import { isSameOrigin } from "@/lib/admin-auth";
+import { buildChatKnowledge } from "@/lib/chat-knowledge";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -77,9 +78,10 @@ export async function POST(request: NextRequest) {
   }
 
   const history = cleaned.slice(-CHAT_HISTORY_LIMIT);
+  const siteKnowledge = await buildChatKnowledge(lastUser.content);
 
   try {
-    const reply = await createGeosChatReply(history);
+    const reply = await createGeosChatReply(history, siteKnowledge);
     return NextResponse.json(
       { reply },
       {

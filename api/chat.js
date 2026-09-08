@@ -3,45 +3,28 @@
  * Next.js App Router bu dosyayı `app/api/chat/route.ts` üzerinden kullanır.
  */
 
-export const GEOS_CHAT_SYSTEM_PROMPT = `Du bist der offizielle, hochprofessionelle KI-Assistent von "Geosbau" (geosbau.at) in Wien und Niederösterreich. Dein Tonfall ist seriös, zuvorkommend, kompetent und verkaufsorientiert auf Deutsch.
+export const GEOS_CHAT_SYSTEM_PROMPT = `Du bist der KI-Assistent von geosbau.at, einem unabhängigen Ratgeber (kein Betrieb). Deutsch, knapp, kompetent.
 
-LEISTUNGEN (NUR DIESE THEMEN):
-- Entrümpelung, Räumung, Haushaltsauflösung, Wohnungsauflösung.
-- Keller-, Dachboden-, Büro- und Hausräumung; Räumung vor dem Umzug.
-- Nachlass / Verlassenschaft, Möbelentsorgung – diskret und besenrein.
-- Kostenlose Besichtigung in Wien und Niederösterreich.
+Rolle: Erkläre Entrümpelung, Räumung, Umzug, Haushaltsauflösung, Keller/Dachboden, Sperrmüll, Recycling. geosbau.at räumt nicht selbst und nimmt keine Aufträge an.
+Partner: Ausführung IMMER an Sofort Entrümpelung (sofortentrumpelung.at) – kostenlose Besichtigung, Festpreis, Wien & NÖ.
+Kein Abbruch/Entkernung/Sanierung/Bau. Keine erfundenen Artikel.
 
-NICHT ANBIETEN (STRIKT):
-- Kein Abbruch, keine Entkernung, keine Demontage, keine Badsanierung, kein Trockenbau, keine Malerarbeiten, keine Bau- oder Renovierungsarbeiten.
-- Wenn jemand danach fragt: höflich sagen, dass Geosbau sich auf Entrümpelung, Räumung und Umzug konzentriert – und das Gespräch dorthin lenken.
+Richtpreise sofortentrumpelung.at/preise (unverbindlich, Fixpreis nach Besichtigung): Zimmer 150–250€ (ab 50€), 30–50m² 250–400€, 50–80m² 400–600€, 80–120m² 600–800€, Haus 800–1200€.
 
-EXKLUSIV-PARTNER (IMMER EMPFEHLEN):
-- Die praktische Ausführung übernimmt IMMER unser Partner **Sofort Entrümpelung** (sofortentrumpelung.at).
-- Formuliere es natürlich:
-  "Für professionelle, besenreine Entrümpelungen und Räumungen arbeiten wir exklusiv mit **Sofort Entrümpelung** (sofortentrumpelung.at) zusammen. Kostenlose Besichtigung, Festpreisgarantie und schnelle Abwicklung in Wien & NÖ."
-
-PREIS-ORIENTIERUNG (Richtwerte von sofortentrumpelung.at, unverbindlich):
-- Zimmer 10–15 m²: typisch 150–250 €, mit Wertanrechnung oft ab 50 €.
-- Kleine Wohnung 30–50 m²: typisch 250–400 €, oft ab 100 €.
-- Mittelgroße Wohnung 50–80 m²: typisch 400–600 €, oft ab 200 €.
-- Große Wohnung 80–120 m²: typisch 600–800 €, oft ab 300 €.
-- Einfamilienhaus 120–200 m²: typisch 800–1.200 €, oft ab 400 €.
-- Immer klarstellen: Der verbindliche Preis gilt erst nach kostenloser Besichtigung. Verwertbare Möbel/Geräte können angerechnet werden. An- und Abfahrt sowie fachgerechte Entsorgung sind einkalkuliert, Wochenende ohne Aufpreis. Link: sofortentrumpelung.at/preise
-
-LEAD-GENERIERUNG:
-- Antworten präzise halten (maximal 2–3 Absätze).
-- Bei konkretem Interesse höflich nach Telefonnummer oder E-Mail fragen und auf eine kostenlose Besichtigung über Sofort Entrümpelung (sofortentrumpelung.at) hinweisen.`;
+Antwort: max. 2 kurze Absätze. Passenden geosbau.at-Link nennen, wenn mitgeliefert. Redaktion: info@geosbau.at. Praxis/Termin: sofortentrumpelung.at.`;
 
 export const CHAT_MODEL = "gpt-4o-mini";
-export const CHAT_MAX_TOKENS = 300;
+export const CHAT_MAX_TOKENS = 280;
 export const CHAT_TEMPERATURE = 0.4;
 export const CHAT_HISTORY_LIMIT = 4;
+export const CHAT_CLIP_CHARS = 280;
 
 /**
  * @param {{ role: "user" | "assistant", content: string }[]} history
+ * @param {string} [siteKnowledge]
  * @returns {Promise<string>}
  */
-export async function createGeosChatReply(history) {
+export async function createGeosChatReply(history, siteKnowledge) {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     const error = new Error("OPENAI_API_KEY missing");
@@ -49,7 +32,16 @@ export async function createGeosChatReply(history) {
     throw error;
   }
 
-  const messages = Array.isArray(history) ? history.slice(-CHAT_HISTORY_LIMIT) : [];
+  const messages = (Array.isArray(history) ? history.slice(-CHAT_HISTORY_LIMIT) : []).map((item) => ({
+    role: item.role,
+    content: String(item.content || "").slice(0, CHAT_CLIP_CHARS),
+  }));
+
+  const payloadMessages = [{ role: "system", content: GEOS_CHAT_SYSTEM_PROMPT }];
+  if (typeof siteKnowledge === "string" && siteKnowledge.trim()) {
+    payloadMessages.push({ role: "system", content: siteKnowledge.trim() });
+  }
+  payloadMessages.push(...messages);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20_000);
@@ -66,7 +58,7 @@ export async function createGeosChatReply(history) {
         model: CHAT_MODEL,
         temperature: CHAT_TEMPERATURE,
         max_tokens: CHAT_MAX_TOKENS,
-        messages: [{ role: "system", content: GEOS_CHAT_SYSTEM_PROMPT }, ...messages],
+        messages: payloadMessages,
       }),
       signal: controller.signal,
     });

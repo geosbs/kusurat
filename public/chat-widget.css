@@ -4,7 +4,6 @@
   --geos-gold: #c9a227;
   --geos-gold-soft: #e3c56a;
   --geos-cream: #f6f3ec;
-  --geos-ink: #1c2430;
   --geos-online: #3dba6b;
   font-family: Inter, system-ui, sans-serif;
 }
@@ -24,53 +23,71 @@
 
 #geos-chat-trigger {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: 22px;
+  bottom: 22px;
   z-index: 99990;
-  display: flex;
-  height: 62px;
-  width: 62px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
+  display: grid;
+  height: 60px;
+  width: 60px;
+  place-items: center;
+  border: 1px solid rgba(227, 197, 106, 0.45);
   border-radius: 50%;
-  background: linear-gradient(160deg, #16324a 0%, #0b1f33 100%);
+  background: linear-gradient(165deg, #1a3a54 0%, #0b1f33 72%);
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(11, 31, 51, 0.28), 0 0 0 0 rgba(201, 162, 39, 0.45);
-  animation: geos-chat-pulse 2.4s ease-out infinite;
+  box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.42);
+  animation: geos-chat-pulse 2.6s ease-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 #geos-chat-trigger:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 16px 34px rgba(11, 31, 51, 0.38);
 }
 
 #geos-chat-trigger[aria-expanded="true"] {
   animation: none;
+  background: linear-gradient(165deg, #c9a227, #a8871c);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+#geos-chat-trigger[aria-expanded="true"] .geos-chat-icon-open {
+  display: none;
+}
+
+#geos-chat-trigger[aria-expanded="false"] .geos-chat-icon-close,
+#geos-chat-trigger .geos-chat-icon-close {
+  display: none;
+}
+
+#geos-chat-trigger[aria-expanded="true"] .geos-chat-icon-close {
+  display: block;
 }
 
 #geos-chat-box {
   position: fixed;
-  right: 20px;
-  bottom: 94px;
+  right: 22px;
+  bottom: 96px;
   z-index: 99991;
   display: flex;
-  width: min(380px, calc(100vw - 24px));
-  height: min(560px, calc(100dvh - 120px));
+  width: min(392px, calc(100vw - 24px));
+  height: min(580px, calc(100dvh - 122px));
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(11, 31, 51, 0.92), rgba(22, 50, 74, 0.88));
-  box-shadow: 0 24px 60px rgba(11, 31, 51, 0.35);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(227, 197, 106, 0.22);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(11, 31, 51, 0.94), rgba(14, 38, 58, 0.9));
+  box-shadow: 0 28px 70px rgba(11, 31, 51, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   color: #f6f3ec;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(16px) scale(0.96);
+  transform: translateY(18px) scale(0.97);
   transform-origin: bottom right;
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transition: opacity 0.24s ease, transform 0.24s ease;
 }
 
 #geos-chat-box.is-open {
@@ -84,29 +101,29 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 16px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 16px 13px;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.18);
 }
 
 #geos-chat-brand {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 
 #geos-chat-logo {
   display: grid;
-  height: 36px;
+  height: 38px;
   width: 36px;
   place-items: center;
-  border-radius: 10px;
-  background: #0b1f33;
-  color: #c9a227;
+  border: 1px solid rgba(201, 162, 39, 0.45);
+  border-radius: 11px;
+  background: linear-gradient(160deg, #16324a, #0b1f33);
+  color: #e3c56a;
   font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 #geos-chat-title {
@@ -120,8 +137,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 3px;
-  color: rgba(246, 243, 236, 0.78);
+  margin: 3px 0 0;
+  color: rgba(246, 243, 236, 0.72);
   font-size: 12px;
 }
 
@@ -130,64 +147,74 @@
   width: 8px;
   border-radius: 50%;
   background: var(--geos-online);
-  box-shadow: 0 0 0 4px rgba(61, 186, 107, 0.18);
+  box-shadow: 0 0 0 0 rgba(61, 186, 107, 0.45);
+  animation: geos-chat-online 1.8s ease-out infinite;
 }
 
 #geos-chat-close {
+  display: grid;
   height: 34px;
   width: 34px;
+  place-items: center;
   border: 0;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.07);
   color: #fff;
   cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
+  transition: background 0.15s ease;
+}
+
+#geos-chat-close:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 #geos-chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 14px 8px;
+  padding: 16px 14px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 162, 39, 0.45) transparent;
 }
 
 .geos-chat-bubble {
   max-width: 86%;
   margin-bottom: 10px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border-radius: 16px;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13.5px;
+  line-height: 1.55;
   white-space: pre-wrap;
   word-wrap: break-word;
+  animation: geos-chat-in 0.22s ease;
 }
 
 .geos-chat-bubble--bot {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(201, 162, 39, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(201, 162, 39, 0.16);
   color: #f6f3ec;
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 5px;
 }
 
 .geos-chat-bubble--user {
   margin-left: auto;
-  background: #c9a227;
+  background: linear-gradient(180deg, #e3c56a, #c9a227);
   color: #0b1f33;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 5px;
 }
 
 .geos-chat-bubble a {
   color: #e3c56a;
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 #geos-chat-typing {
   display: none;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   width: fit-content;
   margin: 0 0 10px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.08);
 }
@@ -197,8 +224,8 @@
 }
 
 #geos-chat-typing span {
-  height: 7px;
-  width: 7px;
+  height: 6px;
+  width: 6px;
   border-radius: 50%;
   background: #c9a227;
   animation: geos-chat-typing 1s infinite ease-in-out;
@@ -215,18 +242,29 @@
 #geos-chat-quick {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 14px 10px;
+  gap: 7px;
+  padding: 4px 14px 10px;
+}
+
+#geos-chat-quick.is-hidden {
+  display: none;
 }
 
 .geos-chat-quick {
-  border: 1px solid rgba(201, 162, 39, 0.35);
+  border: 1px solid rgba(201, 162, 39, 0.32);
   border-radius: 999px;
-  background: rgba(201, 162, 39, 0.12);
+  background: rgba(201, 162, 39, 0.1);
   color: #f6f3ec;
   cursor: pointer;
   font-size: 12px;
-  padding: 7px 10px;
+  line-height: 1.2;
+  padding: 8px 11px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.geos-chat-quick:hover {
+  background: rgba(201, 162, 39, 0.2);
+  border-color: rgba(201, 162, 39, 0.55);
 }
 
 #geos-chat-form {
@@ -234,46 +272,70 @@
   gap: 8px;
   padding: 12px 14px 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 #geos-chat-input {
   flex: 1;
   min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
   color: #fff;
   font: inherit;
   font-size: 14px;
   outline: none;
-  padding: 11px 12px;
+  padding: 11px 13px;
+}
+
+#geos-chat-input:focus {
+  border-color: rgba(201, 162, 39, 0.55);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.12);
 }
 
 #geos-chat-input::placeholder {
-  color: rgba(246, 243, 236, 0.55);
+  color: rgba(246, 243, 236, 0.48);
 }
 
 #geos-chat-send {
+  display: grid;
+  width: 44px;
   flex-shrink: 0;
+  place-items: center;
   border: 0;
   border-radius: 14px;
-  background: #c9a227;
+  background: linear-gradient(180deg, #e3c56a, #c9a227);
   color: #0b1f33;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 0 14px;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+#geos-chat-send:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
 }
 
 @keyframes geos-chat-pulse {
   0% {
-    box-shadow: 0 10px 28px rgba(11, 31, 51, 0.28), 0 0 0 0 rgba(201, 162, 39, 0.48);
+    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.46);
   }
   70% {
-    box-shadow: 0 10px 28px rgba(11, 31, 51, 0.28), 0 0 0 16px rgba(201, 162, 39, 0);
+    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 16px rgba(201, 162, 39, 0);
   }
   100% {
-    box-shadow: 0 10px 28px rgba(11, 31, 51, 0.28), 0 0 0 0 rgba(201, 162, 39, 0);
+    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0);
+  }
+}
+
+@keyframes geos-chat-online {
+  0% {
+    box-shadow: 0 0 0 0 rgba(61, 186, 107, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(61, 186, 107, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(61, 186, 107, 0);
   }
 }
 
@@ -290,6 +352,17 @@
   }
 }
 
+@keyframes geos-chat-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 480px) {
   #geos-chat-trigger {
     right: 14px;
@@ -301,13 +374,15 @@
     bottom: 86px;
     width: calc(100vw - 16px);
     height: min(78dvh, 560px);
-    border-radius: 18px;
+    border-radius: 20px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   #geos-chat-trigger,
-  #geos-chat-typing span {
+  #geos-chat-dot,
+  #geos-chat-typing span,
+  .geos-chat-bubble {
     animation: none;
   }
 

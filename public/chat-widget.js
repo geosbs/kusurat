@@ -6,7 +6,7 @@
   var MAX_CHARS = 800;
   var QUICK = ["Was kostet eine Entrümpelung?", "Wohnung räumen lassen", "Umzug & Haushaltsauflösung"];
   var WELCOME =
-    "Guten Tag, ich bin der Geosbau Assistent. Ich helfe Ihnen bei Entrümpelung, Räumung und Umzug in Wien und Niederösterreich – und vermittle unseren Partner Sofort Entrümpelung. Womit darf ich Ihnen helfen?";
+    "Guten Tag. geosbau.at ist ein unabhängiger Ratgeber zu Entrümpelung, Räumung und Umzug. Für die praktische Durchführung empfehlen wir Sofort Entrümpelung. Womit darf ich helfen?";
 
   function cssHref() {
     var scripts = document.getElementsByTagName("script");
@@ -45,11 +45,14 @@
 
   function linkify(text) {
     return escapeHtml(text).replace(
-      /(https?:\/\/[^\s<]+)|(www\.[^\s<]+)|(sofortentrumpelung\.at)/gi,
+      /(https?:\/\/[^\s<]+)|(www\.[^\s<]+)|((?:sofortentrumpelung|geosbau)\.at(?:\/[^\s<]*)?)/gi,
       function (match) {
         var href = match.indexOf("http") === 0 ? match : "https://" + match.replace(/^www\./i, "");
         if (/sofortentrumpelung\.at/i.test(match) && match.indexOf("http") !== 0) {
-          href = "https://sofortentrumpelung.at";
+          href = "https://" + match.replace(/^www\./i, "");
+        }
+        if (/geosbau\.at/i.test(match) && match.indexOf("http") !== 0) {
+          href = "https://" + match.replace(/^www\./i, "");
         }
         return '<a href="' + href + '" target="_blank" rel="noopener">' + match + "</a>";
       },
@@ -63,7 +66,8 @@
     root.id = "geos-chat-root";
     root.innerHTML =
       '<button type="button" id="geos-chat-trigger" aria-controls="geos-chat-box" aria-expanded="false" aria-label="Geosbau Assistent öffnen">' +
-      '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v6A3.5 3.5 0 0 1 15.5 16H12l-4.2 3.2A.8.8 0 0 1 6.5 18.6V16H8.5A3.5 3.5 0 0 1 5 12.5v-6Z" fill="#C9A227"/></svg>' +
+      '<svg class="geos-chat-icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.2 5.2A3.2 3.2 0 0 1 9.4 2h5.2A3.2 3.2 0 0 1 17.8 5.2v6.1A3.2 3.2 0 0 1 14.6 14.5H12l-3.8 2.9A.75.75 0 0 1 7 16.8v-2.3H9.4A3.2 3.2 0 0 1 6.2 11.3V5.2Z" fill="#E3C56A"/></svg>' +
+      '<svg class="geos-chat-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#0B1F33" stroke-width="2.2" stroke-linecap="round"/></svg>' +
       "</button>" +
       '<section id="geos-chat-box" role="dialog" aria-labelledby="geos-chat-title" aria-hidden="true">' +
       '<header id="geos-chat-header">' +
@@ -72,7 +76,9 @@
       "<div><strong id=\"geos-chat-title\">Geosbau Assistent</strong>" +
       '<p id="geos-chat-status"><span id="geos-chat-dot"></span>Online</p></div>' +
       "</div>" +
-      '<button type="button" id="geos-chat-close" aria-label="Chat schließen">×</button>' +
+      '<button type="button" id="geos-chat-close" aria-label="Chat schließen">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
+      "</button>" +
       "</header>" +
       '<div id="geos-chat-messages">' +
       '<div id="geos-chat-typing" aria-hidden="true"><span></span><span></span><span></span></div>' +
@@ -82,8 +88,10 @@
       '<label for="geos-chat-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Nachricht</label>' +
       '<input id="geos-chat-input" name="message" maxlength="' +
       MAX_CHARS +
-      '" autocomplete="off" placeholder="Ihre Nachricht…" />' +
-      '<button type="submit" id="geos-chat-send">Senden</button>' +
+      '" autocomplete="off" placeholder="Ihre Frage…" />' +
+      '<button type="submit" id="geos-chat-send" aria-label="Senden">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12h13M12.5 6.5 19 12l-6.5 5.5" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      "</button>" +
       "</form>" +
       "</section>";
 
@@ -123,10 +131,8 @@
       box.classList.toggle("is-open", open);
       box.setAttribute("aria-hidden", open ? "false" : "true");
       trigger.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open) {
-        if (!messages.querySelector(".geos-chat-bubble")) addBubble("bot", WELCOME);
-        input.focus();
-      }
+      trigger.setAttribute("aria-label", open ? "Geosbau Assistent schließen" : "Geosbau Assistent öffnen");
+      if (open && !messages.querySelector(".geos-chat-bubble")) addBubble("bot", WELCOME);
     }
 
     function setTyping(on) {
@@ -142,6 +148,7 @@
       addBubble("user", value);
       history.push({ role: "user", content: value });
       history = history.slice(-HISTORY_LIMIT);
+      quick.classList.add("is-hidden");
       setTyping(true);
       input.value = "";
 
@@ -164,7 +171,7 @@
           }
           addBubble("bot", reply);
           if (result.ok && typeof data.reply === "string") {
-            history.push({ role: "assistant", content: reply.slice(0, MAX_CHARS) });
+            history.push({ role: "assistant", content: reply.slice(0, 280) });
             history = history.slice(-HISTORY_LIMIT);
           }
         })
