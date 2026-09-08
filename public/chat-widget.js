@@ -105,8 +105,11 @@
     root.id = "geos-chat-root";
     root.innerHTML =
       '<button type="button" id="geos-chat-trigger" aria-controls="geos-chat-box" aria-expanded="false" aria-label="Geosbau Assistent öffnen">' +
-      '<svg class="geos-chat-icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.2 5.2A3.2 3.2 0 0 1 9.4 2h5.2A3.2 3.2 0 0 1 17.8 5.2v6.1A3.2 3.2 0 0 1 14.6 14.5H12l-3.8 2.9A.75.75 0 0 1 7 16.8v-2.3H9.4A3.2 3.2 0 0 1 6.2 11.3V5.2Z" fill="#E3C56A"/></svg>' +
+      '<img id="geos-chat-mascot" src="/mascot.png" alt="" width="118" height="163" />' +
+      '<span id="geos-chat-oval">' +
+      '<svg class="geos-chat-icon-open" width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v6A3.5 3.5 0 0 1 15.5 16H12l-4.2 3.2A.8.8 0 0 1 6.5 18.6V16H8.5A3.5 3.5 0 0 1 5 12.5v-6Z" fill="#E3C56A"/></svg>' +
       '<svg class="geos-chat-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#0B1F33" stroke-width="2.2" stroke-linecap="round"/></svg>' +
+      "</span>" +
       "</button>" +
       '<section id="geos-chat-box" role="dialog" aria-labelledby="geos-chat-title" aria-hidden="true">' +
       '<header id="geos-chat-header">' +
@@ -132,7 +135,8 @@
       '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 12h13M12.5 6.5 19 12l-6.5 5.5" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
       "</button>" +
       "</form>" +
-      "</section>";
+      "</section>" +
+      '<button type="button" id="geos-chat-hint" aria-hidden="true">1 neue Nachricht</button>';
 
     document.body.appendChild(root);
 
@@ -144,6 +148,7 @@
     var form = document.getElementById("geos-chat-form");
     var input = document.getElementById("geos-chat-input");
     var quick = document.getElementById("geos-chat-quick");
+    var hint = document.getElementById("geos-chat-hint");
     var history = [];
     var pending = false;
     var askedSet = {};
@@ -211,12 +216,24 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    function hideHint() {
+      hint.classList.remove("is-visible");
+      hint.setAttribute("aria-hidden", "true");
+      trigger.classList.remove("has-nudge");
+    }
+
     function setOpen(open) {
       box.classList.toggle("is-open", open);
       box.setAttribute("aria-hidden", open ? "false" : "true");
       trigger.setAttribute("aria-expanded", open ? "true" : "false");
       trigger.setAttribute("aria-label", open ? "Geosbau Assistent schließen" : "Geosbau Assistent öffnen");
-      if (open && !messages.querySelector(".geos-chat-bubble")) addBubble("bot", WELCOME);
+      if (open) {
+        hideHint();
+        try {
+          sessionStorage.setItem("geosChatOpened", "1");
+        } catch (err) {}
+        if (!messages.querySelector(".geos-chat-bubble")) addBubble("bot", WELCOME);
+      }
     }
 
     function setTyping(on) {
@@ -274,6 +291,9 @@
     trigger.addEventListener("click", function () {
       setOpen(!box.classList.contains("is-open"));
     });
+    hint.addEventListener("click", function () {
+      setOpen(true);
+    });
     closeBtn.addEventListener("click", function () {
       setOpen(false);
     });
@@ -284,5 +304,19 @@
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && box.classList.contains("is-open")) setOpen(false);
     });
+
+    var alreadyOpened = false;
+    try {
+      alreadyOpened = sessionStorage.getItem("geosChatOpened") === "1";
+    } catch (err) {}
+    if (!alreadyOpened) {
+      window.setTimeout(function () {
+        if (!box.classList.contains("is-open")) {
+          hint.classList.add("is-visible");
+          hint.setAttribute("aria-hidden", "false");
+          trigger.classList.add("has-nudge");
+        }
+      }, 3500);
+    }
   });
 })();

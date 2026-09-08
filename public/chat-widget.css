@@ -23,29 +23,120 @@
 
 #geos-chat-trigger {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 16px;
+  bottom: 14px;
   z-index: 99990;
-  display: grid;
-  height: 60px;
-  width: 60px;
-  place-items: center;
-  border: 1px solid rgba(227, 197, 106, 0.45);
-  border-radius: 50%;
-  background: linear-gradient(165deg, #1a3a54 0%, #0b1f33 72%);
+  display: flex;
+  width: 124px;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  border: 0;
+  background: transparent;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.42);
+  padding: 0;
+  font-size: 0;
+  line-height: 0;
+  transition: transform 0.2s ease;
+}
+
+#geos-chat-mascot {
+  display: block;
+  width: 118px;
+  height: auto;
+  aspect-ratio: 1235 / 1701;
+  margin: 0;
+  object-fit: contain;
+  object-position: center bottom;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+}
+
+#geos-chat-oval {
+  position: relative;
+  display: grid;
+  width: 90px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgba(227, 197, 106, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(165deg, #1a3a54 0%, #0b1f33 72%);
+  box-shadow: 0 10px 24px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.42);
   animation: geos-chat-pulse 2.6s ease-out infinite;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#geos-chat-oval .geos-chat-icon-open {
+  width: 30px;
+  height: 30px;
+}
+
+#geos-chat-oval .geos-chat-icon-close {
+  width: 18px;
+  height: 18px;
 }
 
 #geos-chat-trigger:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 16px 34px rgba(11, 31, 51, 0.38);
+  transform: translateY(-2px);
 }
 
-#geos-chat-trigger[aria-expanded="true"] {
+#geos-chat-hint {
+  position: fixed;
+  right: 142px;
+  bottom: 62px;
+  z-index: 99992;
+  max-width: min(220px, calc(100vw - 150px));
+  border: 0;
+  border-radius: 14px;
+  background: #0b1f33;
+  color: #f6f3ec;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 10px 12px;
+  text-align: left;
+  box-shadow: 0 10px 24px rgba(11, 31, 51, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.24s ease;
+}
+
+#geos-chat-hint::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  bottom: 14px;
+  border: 7px solid transparent;
+  border-left-color: #0b1f33;
+  border-right: 0;
+}
+
+#geos-chat-hint.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#geos-chat-trigger.has-nudge #geos-chat-oval::after {
+  content: "1";
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: #c9a227;
+  color: #0b1f33;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+#geos-chat-trigger[aria-expanded="true"] #geos-chat-oval {
   animation: none;
   background: linear-gradient(165deg, #c9a227, #a8871c);
   border-color: rgba(255, 255, 255, 0.2);
@@ -66,12 +157,12 @@
 
 #geos-chat-box {
   position: fixed;
-  right: 22px;
-  bottom: 96px;
+  right: 16px;
+  bottom: 108px;
   z-index: 99991;
   display: flex;
   width: min(392px, calc(100vw - 24px));
-  height: min(580px, calc(100dvh - 122px));
+  height: min(580px, calc(100dvh - 116px));
   flex-direction: column;
   overflow: hidden;
   border: 1px solid rgba(227, 197, 106, 0.22);
@@ -322,13 +413,13 @@
 
 @keyframes geos-chat-pulse {
   0% {
-    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.46);
+    box-shadow: 0 10px 24px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0.46);
   }
   70% {
-    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 16px rgba(201, 162, 39, 0);
+    box-shadow: 0 10px 24px rgba(11, 31, 51, 0.32), 0 0 0 14px rgba(201, 162, 39, 0);
   }
   100% {
-    box-shadow: 0 12px 30px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0);
+    box-shadow: 0 10px 24px rgba(11, 31, 51, 0.32), 0 0 0 0 rgba(201, 162, 39, 0);
   }
 }
 
@@ -370,21 +461,40 @@
 
 @media (max-width: 480px) {
   #geos-chat-trigger {
-    right: 14px;
-    bottom: 16px;
+    right: 10px;
+    bottom: 12px;
+    width: 108px;
+  }
+
+  #geos-chat-mascot {
+    width: 100px;
+    height: auto;
+    margin: 0;
+  }
+
+  #geos-chat-oval {
+    width: 80px;
+    height: 42px;
   }
 
   #geos-chat-box {
     right: 8px;
-    bottom: 86px;
+    bottom: 100px;
     width: calc(100vw - 16px);
     height: min(78dvh, 560px);
     border-radius: 20px;
   }
+
+  #geos-chat-hint {
+    right: 122px;
+    bottom: 52px;
+    font-size: 12px;
+    padding: 8px 10px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #geos-chat-trigger,
+  #geos-chat-oval,
   #geos-chat-dot,
   #geos-chat-typing span,
   .geos-chat-bubble {
@@ -392,6 +502,10 @@
   }
 
   #geos-chat-box {
+    transition: none;
+  }
+
+  #geos-chat-hint {
     transition: none;
   }
 }
