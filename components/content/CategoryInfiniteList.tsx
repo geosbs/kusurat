@@ -6,7 +6,7 @@ import { ArticleCard } from "@/components/content/ArticleCard";
 import type { ArticleListCard } from "@/lib/articles";
 
 type CategoryInfiniteListProps = {
-  category: Category;
+  category?: Category;
   initialItems: ArticleListCard[];
   initialHasMore: boolean;
   initialCursor: string | null;
@@ -42,7 +42,8 @@ export function CategoryInfiniteList({
     setLoading(true);
     setError("");
     try {
-      const params = new URLSearchParams({ category, cursor });
+      const params = new URLSearchParams({ cursor });
+      if (category) params.set("category", category);
       const response = await fetch(`/api/articles?${params.toString()}`, {
         method: "GET",
         headers: { Accept: "application/json" },

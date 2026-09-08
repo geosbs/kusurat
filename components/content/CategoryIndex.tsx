@@ -6,17 +6,32 @@ import { CATEGORY_PAGE_SIZE, getPublishedPage } from "@/lib/articles";
 import { CATEGORY_LABEL, CATEGORY_META, categoryPath } from "@/lib/categories";
 
 type CategoryIndexProps = {
-  category: Category;
+  category?: Category;
 };
 
 export async function CategoryIndex({ category }: CategoryIndexProps) {
-  const meta = CATEGORY_META[category];
-  const page = await getPublishedPage({ category, take: CATEGORY_PAGE_SIZE });
+  const all = !category;
+  const meta = category ? CATEGORY_META[category] : null;
+  const page = await getPublishedPage({
+    ...(category ? { category } : {}),
+    take: CATEGORY_PAGE_SIZE,
+  });
+
+  const title = all ? "Alle Ratgeber" : meta!.title;
+  const intro = all
+    ? "Alle Beiträge zu Räumung, Entrümpelung, Nachhaltigkeit und Ordnung – Checklisten, Abläufe und unabhängige Orientierung."
+    : meta!.intro;
 
   return (
     <main id="inhalt">
-      <InnerPage title={meta.title} intro={meta.intro}>
+      <InnerPage title={title} intro={intro}>
         <nav className="mb-8 flex flex-wrap gap-3 text-sm" aria-label="Weitere Themen">
+          <Link
+            href="/ratgeber"
+            className={`rounded-full px-3 py-1.5 ${all ? "bg-navy text-white" : "bg-white text-navy hover:bg-cream-dark"}`}
+          >
+            Alle
+          </Link>
           {(Object.keys(CATEGORY_META) as Category[]).map((item) => (
             <Link
               key={item}
@@ -31,7 +46,7 @@ export async function CategoryIndex({ category }: CategoryIndexProps) {
         </nav>
         {page.items.length === 0 ? (
           <p className="rounded-xl border border-cream-dark bg-white p-6 text-ink-muted">
-            Beiträge zu {CATEGORY_LABEL[category]} folgen in Kürze.
+            {all ? "Beiträge folgen in Kürze." : `Beiträge zu ${CATEGORY_LABEL[category!]} folgen in Kürze.`}
           </p>
         ) : (
           <CategoryInfiniteList
