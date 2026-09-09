@@ -24,7 +24,7 @@
     },
     {
       keys: ["entruempel", "raeum", "moebel", "entsorg"],
-      next: ["Was kostet eine Entrümpelung?", "Sofort Entrümpelung – wie läuft das?"],
+      next: ["Was kostet eine Entrümpelung?", "Wie plane ich den Ablauf?"],
     },
     {
       keys: ["sofort", "partner", "besicht", "termin", "firma"],
@@ -36,10 +36,10 @@
     "Was kostet eine Entrümpelung?",
     "Wohnung räumen lassen",
     "Umzug & Haushaltsauflösung",
-    "Sofort Entrümpelung – wie läuft das?",
+    "Wie plane ich den Ablauf?",
   ];
   var WELCOME =
-    "Guten Tag. geosbau.at ist ein unabhängiger Ratgeber zu Entrümpelung, Räumung und Umzug. Für die praktische Durchführung empfehlen wir Sofort Entrümpelung. Womit darf ich helfen?";
+    "Guten Tag. geosbau.at ist ein unabhängiger Ratgeber zu Entrümpelung, Räumung und Umzug. Womit darf ich Ihnen helfen?";
 
   function cssHref() {
     var scripts = document.getElementsByTagName("script");
