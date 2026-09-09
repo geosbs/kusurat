@@ -107,7 +107,7 @@
       '<button type="button" id="geos-chat-trigger" aria-controls="geos-chat-box" aria-expanded="false" aria-label="Geosbau Assistent öffnen">' +
       '<img id="geos-chat-mascot" src="/mascot.png" alt="" width="118" height="163" />' +
       '<span id="geos-chat-oval">' +
-      '<svg class="geos-chat-icon-open" width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v6A3.5 3.5 0 0 1 15.5 16H12l-4.2 3.2A.8.8 0 0 1 6.5 18.6V16H8.5A3.5 3.5 0 0 1 5 12.5v-6Z" fill="#E3C56A"/></svg>' +
+      '<svg class="geos-chat-icon-open" width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="3.1" r="1.35" fill="#E3C56A"/><path d="M12 4.4v1.7" stroke="#E3C56A" stroke-width="1.8" stroke-linecap="round"/><rect x="3.1" y="10.2" width="2.3" height="4.4" rx="1.15" fill="#E3C56A"/><rect x="18.6" y="10.2" width="2.3" height="4.4" rx="1.15" fill="#E3C56A"/><rect x="5.1" y="6.4" width="13.8" height="12.2" rx="3.4" fill="#E3C56A"/><rect x="7.9" y="10.1" width="2.7" height="3.4" rx="1.25" fill="#0B1F33"/><rect x="13.4" y="10.1" width="2.7" height="3.4" rx="1.25" fill="#0B1F33"/><path d="M9.1 16h5.8" stroke="#0B1F33" stroke-width="1.7" stroke-linecap="round"/></svg>' +
       '<svg class="geos-chat-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#0B1F33" stroke-width="2.2" stroke-linecap="round"/></svg>' +
       "</span>" +
       "</button>" +
