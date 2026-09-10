@@ -4,6 +4,7 @@ import { ArticleBody } from "@/components/content/ArticleBody";
 import { getRelatedArticles } from "@/lib/articles";
 import { articlePath, CATEGORY_LABEL, categoryPath } from "@/lib/categories";
 import { extractFaqs } from "@/lib/faq";
+import { firstParagraphText, withoutFirstParagraph } from "@/lib/html-content";
 import { getOrganizationNode, getPersonNode, getPlaceNode, ORG_ID, SITE_ID } from "@/lib/jsonld";
 import { formatPublicDate } from "@/lib/queue";
 import { SITE } from "@/lib/site";
@@ -20,6 +21,8 @@ export async function ArticleView({ article }: ArticleViewProps) {
   const modified = article.updatedAt.toISOString();
 
   const faqs = extractFaqs(article.content);
+  const lead = firstParagraphText(article.content) || article.excerpt;
+  const bodyContent = withoutFirstParagraph(article.content);
 
   const organizationLd = getOrganizationNode();
 
@@ -127,14 +130,14 @@ export async function ArticleView({ article }: ArticleViewProps) {
           </p>
           <h1 className="mt-3 font-serif text-[36px] leading-tight text-navy lg:text-[42px]">{article.title}</h1>
           <p className="mt-4 text-sm text-ink-muted">{formatPublicDate(publishedAt)}</p>
-          <p className="mt-5 text-[18px] leading-8 text-ink-muted">{article.excerpt}</p>
+          <p className="mt-5 text-[18px] leading-8 text-ink-muted">{lead}</p>
           <p className="mt-4 text-[13px] leading-6 text-ink-muted">
             GEOSBAU ist ein unabhängiger Ratgeber. Wir führen keine Räumungen durch und vermitteln keine Aufträge.
           </p>
         </div>
 
         <div className="prose-article mt-10 max-w-3xl">
-          <ArticleBody article={article} />
+          <ArticleBody article={{ ...article, content: bodyContent }} />
         </div>
 
         {related.length > 0 ? (
@@ -150,7 +153,7 @@ export async function ArticleView({ article }: ArticleViewProps) {
                       {item.title}
                     </Link>
                   </h3>
-                  <p className="mt-2 text-[14px] leading-6 text-ink-muted">{item.excerpt}</p>
+                  <p className="mt-2 line-clamp-3 text-[14px] leading-6 text-ink-muted">{item.excerpt}</p>
                 </li>
               ))}
             </ul>

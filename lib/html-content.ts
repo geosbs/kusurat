@@ -51,12 +51,63 @@ export function sanitizeArticleHtml(dirty: string) {
 }
 
 export function excerptFromContent(content: string, fallback = "") {
-  const text = looksLikeHtml(content)
-    ? sanitizeHtml(content, { allowedTags: [], allowedAttributes: {} })
-    : content.replace(/[#>*`_\-\[\]()]/g, " ");
-  const collapsed = text.replace(/\s+/g, " ").trim();
-  if (collapsed) return collapsed.slice(0, 220);
-  return fallback.slice(0, 220);
+  const first = firstParagraphText(content, 800);
+  if (first) return first;
+  const fallbackText = fallback.replace(/\s+/g, " ").trim();
+  return fallbackText.length > 800 ? trimAtSentence(fallbackText, 800) : fallbackText;
+}
+
+function stripToText(html: string) {
+  return sanitizeHtml(html, { allowedTags: [], allowedAttributes: {} }).replace(/\s+/g, " ").trim();
+}
+
+export function firstParagraphText(content: string, max = 800) {
+  const raw = String(content || "").trim();
+  if (!raw) return "";
+
+  let para = "";
+  if (looksLikeHtml(raw)) {
+    for (const match of raw.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)) {
+      const text = stripToText(match[1] || "");
+      if (text) {
+        para = text;
+        break;
+      }
+    }
+    if (!para) para = stripToText(raw);
+  } else {
+    para = raw.split(/\n\s*\n/)[0] || raw;
+    para = para.replace(/[#>*`_\-\[\]()]/g, " ");
+  }
+
+  para = para.replace(/\s+/g, " ").trim();
+  if (!para) return "";
+  return para.length > max ? trimAtSentence(para, max) : para;
+}
+
+/** Drop the first paragraph so the article body does not repeat the on-page lead. */
+export function withoutFirstParagraph(content: string) {
+  const raw = String(content || "").trim();
+  if (!raw) return "";
+
+  if (looksLikeHtml(raw)) {
+    let remaining = raw.replace(/^(?:\s*<p\b[^>]*>\s*<\/p>)+/i, "");
+    remaining = remaining.replace(/^\s*<p\b[^>]*>[\s\S]*?<\/p>\s*/i, "").trim();
+    return remaining || raw;
+  }
+
+  const parts = raw.split(/\n\s*\n/);
+  if (parts.length < 2) return raw;
+  return parts.slice(1).join("\n\n").trim() || raw;
+}
+
+function trimAtSentence(text: string, max: number) {
+  const cut = text.slice(0, max).trimEnd();
+  const lastStop = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+  if (lastStop > Math.min(160, Math.floor(max * 0.45))) {
+    return cut.slice(0, lastStop + 1).trim();
+  }
+  return `${cut.replace(/[^\s]*$/, "").trimEnd()}…`;
 }
 
 export function isHtmlContent(content: string) {

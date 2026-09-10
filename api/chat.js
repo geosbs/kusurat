@@ -9,9 +9,10 @@ Rolle: Erkläre Entrümpelung, Räumung, Umzug, Haushaltsauflösung, Keller/Dach
 Antworten: max. 2 kurze Absätze. Passenden geosbau.at-Link nennen, wenn mitgeliefert. Redaktion: info@geosbau.at.
 
 EMPFEHLUNG (nur wenn es natürlich ist, NICHT in jeder Antwort):
-- Empfiehl Sofort Entrümpelung nur, wenn der Nutzer klar eine Firma, einen Termin, ein Angebot, eine Besichtigung oder „wer macht das praktisch?“ will.
+- Die allererste Antwort einer Unterhaltung: KEINE Empfehlung, kein Firmenname, keine URL sofortentrumpelung.at.
+- Später nur empfehlen, wenn der Nutzer klar eine Firma, einen Termin, ein Angebot oder „wer macht das praktisch?“ will.
 - Dann einmal, sachlich, z. B.: „Wenn Sie ein Unternehmen für die Durchführung suchen, kann ich Sofort Entrümpelung empfehlen: https://sofortentrumpelung.at“
-- Nicht empfehlen bei reinen Ratgeberfragen (Checkliste, Ablauf, Recycling, DIY). Nicht im Begrüßungston. Nicht wiederholen, wenn du es in dieser Unterhaltung schon genannt hast.
+- Nicht empfehlen bei reinen Ratgeberfragen (Checkliste, Ablauf, Recycling, DIY). Nicht im Begrüßungstext. Nicht wiederholen, wenn du es in dieser Unterhaltung schon genannt hast.
 - Link immer nackt mit Leerzeichen: https://sofortentrumpelung.at  Nie in Klammern, nie mit Punkt davor/danach.
 
 Richtpreise (nur bei Preisfragen, unverbindlich): Zimmer 150–250€ (ab 50€), 30–50m² 250–400€, 50–80m² 400–600€, 80–120m² 600–800€, Haus 800–1200€. Fixpreis nach Besichtigung.`;
@@ -21,6 +22,15 @@ export const CHAT_MAX_TOKENS = 280;
 export const CHAT_TEMPERATURE = 0.4;
 export const CHAT_HISTORY_LIMIT = 4;
 export const CHAT_CLIP_CHARS = 280;
+
+function stripPartner(text) {
+  return String(text || "")
+    .replace(/https?:\/\/(?:www\.)?sofortentrumpelung\.at(?:\/[^\s]*)?/gi, "")
+    .replace(/\bSofort\s+Entr(?:ü|ue)mpelung\b/gi, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/[ \t]*\n[ \t]*/g, "\n")
+    .trim();
+}
 
 function sanitizeReply(reply) {
   return String(reply || "")
@@ -54,9 +64,18 @@ export async function createGeosChatReply(history, siteKnowledge) {
     content: String(item.content || "").slice(0, CHAT_CLIP_CHARS),
   }));
 
+  const isFirstTurn = messages.filter((item) => item.role === "user").length <= 1;
+
   const payloadMessages = [{ role: "system", content: GEOS_CHAT_SYSTEM_PROMPT }];
   if (typeof siteKnowledge === "string" && siteKnowledge.trim()) {
     payloadMessages.push({ role: "system", content: siteKnowledge.trim() });
+  }
+  if (isFirstTurn) {
+    payloadMessages.push({
+      role: "system",
+      content:
+        "Erste Nutzerfrage: keine Firmenempfehlung, nicht Sofort Entrümpelung, keine URL sofortentrumpelung.at. Nur Ratgeberwissen.",
+    });
   }
   payloadMessages.push(...messages.filter((item) => item.content));
 
@@ -122,5 +141,5 @@ export async function createGeosChatReply(history, siteKnowledge) {
     throw error;
   }
 
-  return sanitizeReply(reply);
+  return isFirstTurn ? stripPartner(sanitizeReply(reply)) : sanitizeReply(reply);
 }

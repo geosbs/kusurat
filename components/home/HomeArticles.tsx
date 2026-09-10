@@ -54,7 +54,7 @@ export async function HomeArticles() {
                         {article.title}
                       </Link>
                     </h3>
-                    <p className="mt-3 flex-1 text-[15px] leading-7 text-ink-muted">{article.excerpt}</p>
+                    <p className="mt-3 line-clamp-4 flex-1 text-[15px] leading-7 text-ink-muted">{article.excerpt}</p>
                     <Link
                       href={articlePath(article.category, article.slug)}
                       className="mt-5 inline-flex items-center gap-2 text-[14px] font-semibold text-forest hover:underline"
