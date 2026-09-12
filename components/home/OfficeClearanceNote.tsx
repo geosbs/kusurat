@@ -21,7 +21,16 @@ export function OfficeClearanceNote() {
               Hausentrümpelung Wien
             </a>{" "}
             durch erfahrene Spezialisten, die für eine besenreine Räumung und fachgerechte Entsorgung aller Altlasten
-            sorgen.
+            sorgen. Für Wohnungen und Häuser in der Stadt gilt dasselbe: Eine strukturierte{" "}
+            <a
+              href={HOUSE_CLEARANCE_URL}
+              target="_blank"
+              rel="noopener"
+              className="font-medium text-forest underline-offset-2 hover:underline"
+            >
+              Entrümpelung Wien
+            </a>{" "}
+            reduziert Wege, schützt das Objekt und macht den Ablauf planbar.
           </p>
         </article>
       </div>
