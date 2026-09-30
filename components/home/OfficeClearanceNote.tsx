@@ -1,4 +1,5 @@
 const HOUSE_CLEARANCE_URL = "https://sofortentrumpelung.at";
+const ENTRUEMPELUNG_WIEN_URL = "https://sofortentrumpelung.at/entruempelung-wien-1010";
 
 export function OfficeClearanceNote() {
   return (
@@ -23,7 +24,7 @@ export function OfficeClearanceNote() {
             durch erfahrene Spezialisten, die für eine besenreine Räumung und fachgerechte Entsorgung aller Altlasten
             sorgen. Für Wohnungen und Häuser in der Stadt gilt dasselbe: Eine strukturierte{" "}
             <a
-              href={HOUSE_CLEARANCE_URL}
+              href={ENTRUEMPELUNG_WIEN_URL}
               target="_blank"
               rel="noopener"
               className="font-medium text-forest underline-offset-2 hover:underline"
