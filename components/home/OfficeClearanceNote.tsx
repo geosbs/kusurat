@@ -1,4 +1,3 @@
-const HOUSE_CLEARANCE_URL = "https://sofortentrumpelung.at";
 const ENTRUEMPELUNG_WIEN_URL = "https://sofortentrumpelung.at/entruempelung-wien-1010";
 
 export function OfficeClearanceNote() {
@@ -12,15 +11,7 @@ export function OfficeClearanceNote() {
           </h2>
           <p className="mt-4 text-[16px] leading-7 text-ink-muted">
             Ein komplettes Haus vom Keller bis zum Dachboden zu leeren, erfordert enorme Arbeitskraft und eine
-            durchdachte Logistik. Um Zeit und Nerven zu sparen, lohnt sich eine professionelle{" "}
-            <a
-              href={HOUSE_CLEARANCE_URL}
-              target="_blank"
-              rel="noopener"
-              className="font-medium text-forest underline-offset-2 hover:underline"
-            >
-              Hausentrümpelung Wien
-            </a>{" "}
+            durchdachte Logistik. Um Zeit und Nerven zu sparen, lohnt sich eine professionelle Hausentrümpelung Wien
             durch erfahrene Spezialisten, die für eine besenreine Räumung und fachgerechte Entsorgung aller Altlasten
             sorgen. Für Wohnungen und Häuser in der Stadt gilt dasselbe: Eine strukturierte{" "}
             <a
