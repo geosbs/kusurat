@@ -11,9 +11,9 @@ export function OfficeClearanceNote() {
           </h2>
           <p className="mt-4 text-[16px] leading-7 text-ink-muted">
             Ein komplettes Haus vom Keller bis zum Dachboden zu leeren, erfordert enorme Arbeitskraft und eine
-            durchdachte Logistik. Um Zeit und Nerven zu sparen, lohnt sich eine professionelle Hausentrümpelung Wien
-            durch erfahrene Spezialisten, die für eine besenreine Räumung und fachgerechte Entsorgung aller Altlasten
-            sorgen. Für Wohnungen und Häuser in der Stadt gilt dasselbe: Eine strukturierte{" "}
+            durchdachte Logistik. Um Zeit und Nerven zu sparen, lohnt es sich, eine professionelle Entrümpelungsfirma
+            mit erfahrenen Spezialisten zu beauftragen, die für eine besenreine Räumung und die fachgerechte Entsorgung
+            aller Altlasten sorgt. Für Wohnungen und Häuser in der Stadt gilt dasselbe: Eine strukturierte{" "}
             <a
               href={ENTRUEMPELUNG_WIEN_URL}
               target="_blank"
@@ -22,7 +22,7 @@ export function OfficeClearanceNote() {
             >
               Entrümpelung Wien
             </a>{" "}
-            reduziert Wege, schützt das Objekt und macht den Ablauf planbar.
+            reduziert Wege, schützt das Objekt und macht den gesamten Ablauf planbar.
           </p>
         </article>
       </div>
